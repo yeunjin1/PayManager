@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">PayManager</string>
+    <string name="title_home">달력</string>
+    <string name="title_dashboard">근무</string>
+    <string name="title_notifications">관리</string>
+</resources>
