@@ -1,10 +1,53 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:timePickerStyle">@style/MyTimePickerTheme</item>
     </style>
+
+    <style name="SettingTextView"  parent="@android:style/Widget.TextView">
+        <item name="android:textSize">25sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:paddingRight">3dp</item>
+    </style>
+
+    <style name="TimePickerButton" parent="@android:style/Widget.TextView">
+        <item name="android:background">@drawable/time_picker_background</item>
+        <item name="android:text">12:00</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="TimeEditText" parent="@android:style/Widget.EditText">
+        <item name="android:background">@null</item>
+        <item name="android:ems">7</item>
+        <item name="android:gravity">end</item>
+        <item name="android:inputType">numberDecimal</item>
+        <item name="android:text">0</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+    </style>
+
+
+
+    <style name="MyTimePickerTheme" parent="android:Widget.Material.Light.TimePicker">
+        <item name="android:timePickerMode">spinner</item>
+    </style>
+
+
 
 </resources>

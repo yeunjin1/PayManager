@@ -3,4 +3,14 @@
     <string name="title_home">달력</string>
     <string name="title_dashboard">근무</string>
     <string name="title_notifications">관리</string>
+    <string name="mon">월</string>
+    <string name="tue">화</string>
+    <string name="wed">수</string>
+    <string name="thu">목</string>
+    <string name="fri">금</string>
+    <string name="sat">토</string>
+    <string name="sun">일</string>
+    <string name="setting_title">근무지</string>
+    <string name="addPlace_confirm">확인</string>
+    <string name="addPlace_toolbar_title">근무지 생성</string>
 </resources>
