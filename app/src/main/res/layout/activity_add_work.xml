@@ -169,7 +169,7 @@
         style="@style/TimeEditText"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/textView8"
-        app:layout_constraintEnd_toStartOf="@id/textView9"
+        app:layout_constraintEnd_toStartOf="@id/totalMoneyText"
         app:layout_constraintTop_toTopOf="@+id/textView8" />
 
     <TextView
@@ -193,7 +193,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView7" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/totalMoneyText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="분"

@@ -68,6 +68,7 @@ class CalendarFragment : Fragment() {
                 container.textView.text = day.date.dayOfMonth.toString()
                 container.view.setOnClickListener {
                     it.background = ContextCompat.getDrawable(context!!, R.color.colorPrimaryLight)
+
                     selectedDay = day.date
                     selectedWorkResult = mainActivity.workResults.where().equalTo("date", Date.from(selectedDay.atStartOfDay(ZoneId.systemDefault()).toInstant())).findAll()!!.sort("timePush", Sort.ASCENDING)
                     Log.d("mytag", selectedDay.toString())
@@ -78,10 +79,10 @@ class CalendarFragment : Fragment() {
                         override fun OnItemClick(
                             holder: CalListAdapter.ViewHolder,
                             view: View,
-                            placeId: String
+                            workId: String
                         ) {
                             val intent = Intent(mainActivity, AddWorkActivity::class.java)
-                            intent.putExtra("placeId", placeId)
+                            intent.putExtra("workId", workId)
                             startActivity(intent)
                         }
                     }
@@ -113,10 +114,10 @@ class CalendarFragment : Fragment() {
             override fun OnItemClick(
                 holder: CalListAdapter.ViewHolder,
                 view: View,
-                placeId: String
+                workId: String
             ) {
                 val intent = Intent(mainActivity, AddWorkActivity::class.java)
-                intent.putExtra("placeId", placeId)
+                intent.putExtra("workId", workId)
                 startActivity(intent)
             }
         }

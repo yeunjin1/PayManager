@@ -1,8 +1,6 @@
 package konkuk.yeonj.paymanager.ui.calendar
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,20 +12,14 @@ import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
 import io.realm.RealmResults
 import konkuk.yeonj.paymanager.R
+import konkuk.yeonj.paymanager.convertToTimeString
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
-import konkuk.yeonj.paymanager.ui.setting.SettingListAdapter
-import java.text.SimpleDateFormat
-import java.time.DateTimeException
-import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class CalListAdapter (realmResult: OrderedRealmCollection<Work>, val context: Context, val placeResults: RealmResults<Place>) : RealmRecyclerViewAdapter<Work, CalListAdapter.ViewHolder>(realmResult, true) {
-    val dateForamt = DateTimeFormatter.ofPattern("HH:mm")
     interface OnItemClickListener{
-        fun OnItemClick(holder: CalListAdapter.ViewHolder, view:View, placeId: String)
+        fun OnItemClick(holder: CalListAdapter.ViewHolder, view:View, workId: String)
     }
 
     var itemClickListener :OnItemClickListener? = null
@@ -47,14 +39,14 @@ class CalListAdapter (realmResult: OrderedRealmCollection<Work>, val context: Co
             circleIcon = itemView.findViewById(R.id.circleIcon)
 
             itemView.setOnClickListener {
-                itemClickListener?.OnItemClick(this, it, getItem(bindingAdapterPosition)!!.placeId)
+                itemClickListener?.OnItemClick(this, it, getItem(bindingAdapterPosition)!!.id)
                 Log.d("mytag", "click")
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.row_work, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.row_cal_list, parent, false)
         return ViewHolder(v)
     }
 
@@ -63,7 +55,7 @@ class CalListAdapter (realmResult: OrderedRealmCollection<Work>, val context: Co
             val item = getItem(position)!!
             val placeItem = placeResults.where().equalTo("id", item.placeId).findFirst()!!
             holder.placeText.text = placeItem.name
-            holder.timeText.text = timeToString(item.timeStart) + " ~ " + timeToString(item.timeEnd)
+            holder.timeText.text = item.timeStart.convertToTimeString() + " ~ " + item.timeEnd.convertToTimeString()
             holder.duringText.text = String.format("%.1f", item.timeDuring / 60.0) + "시간"
             holder.moneyText.text = (placeItem.payByHour * (item.timeDuring / 60.0)).toInt().toString() + "원"
             var color = 0
@@ -78,9 +70,4 @@ class CalListAdapter (realmResult: OrderedRealmCollection<Work>, val context: Co
         }
     }
 
-    private fun timeToString(time:Int): String{
-        val hour = time / 60
-        val min = time % 60
-        return LocalTime.of(hour, min).format(dateForamt)
-    }
 }

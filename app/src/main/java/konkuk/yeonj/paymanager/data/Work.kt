@@ -17,10 +17,10 @@ open class Work : RealmObject() {
     var timeEnd: Int = 0
     var timeDuring: Int = 0
 
-    // 휴게, 야간, 초과 시간
-    var breakTime: Float = 0.0f
-    var nightTime: Float = 0.0f
-    var overTime : Float = 0.0f
+    // 휴게, 야간, 초과 시간(분)
+    var breakTime: Int = 0
+    var nightTime: Int = 0
+    var overTime : Int = 0
 
     var timePush: Long = 0
 
