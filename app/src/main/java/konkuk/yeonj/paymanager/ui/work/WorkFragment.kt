@@ -1,11 +1,17 @@
 package konkuk.yeonj.paymanager.ui.work
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.SpinnerAdapter
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,6 +21,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import konkuk.yeonj.paymanager.MainActivity
 import konkuk.yeonj.paymanager.R
+import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
 import konkuk.yeonj.paymanager.ui.calendar.AddWorkActivity
 import kotlinx.android.synthetic.main.fragment_work.*
@@ -30,11 +37,11 @@ class WorkFragment : Fragment() {
     private lateinit var endDayofWeek: LocalDate
     private lateinit var mainActivity: MainActivity
     private lateinit var weekResults: RealmResults<Work>
-    val rViewAdapter: WorkListAdapter by lazy{
-        WorkListAdapter(weekResults, mainActivity.applicationContext, mainActivity.placeResults)
-    }
-    var totalTime = 0f
-    var totalMoney = 0
+    private lateinit var rViewAdapter: WorkListAdapter
+    private var totalTime = 0f
+    private var totalMoney = 0
+    lateinit var spinnerAdapter: ArrayAdapter<String>
+    var selectedPlace: Place? = null
 
 
 
@@ -51,18 +58,7 @@ class WorkFragment : Fragment() {
     fun init(){
         mainActivity = activity as MainActivity
         initDay()
-        updateView()
-        rViewAdapter.itemClickListener = object : WorkListAdapter.OnItemClickListener{
-            override fun OnItemClick(
-                holder: WorkListAdapter.ViewHolder,
-                view: View,
-                workId: String
-            ) {
-                val intent = Intent(mainActivity, AddWorkActivity::class.java)
-                intent.putExtra("workId", workId)
-                startActivity(intent)
-            }
-        }
+        initLayout()
     }
 
     fun initDay(){
@@ -71,56 +67,103 @@ class WorkFragment : Fragment() {
         endDayofWeek = now.with(DayOfWeek.FRIDAY)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        toolbar.title = "카페"
-//        val dayStr = startDayofWeek.toString() + " ~ " + endDayofWeek.toString()
-//        dateText.text = dayStr
-
-        rightButton.setOnClickListener {
-            endDayofWeek = endDayofWeek.plusDays(7)
-            startDayofWeek = startDayofWeek.plusDays(7)
-            updateView()
-//            val dayStr = startDayofWeek.toString() + " ~ " + endDayofWeek.toString()
-//            dateText.text = dayStr
-//            weekResults = mainActivity.workResults.where().greaterThanOrEqualTo("date", Date.from(startDayofWeek.atStartOfDay(ZoneId.systemDefault()).toInstant())).lessThanOrEqualTo("date", Date.from(endDayofWeek.atStartOfDay(ZoneId.systemDefault()).toInstant())).findAll()
-//            totalMoney = 0
-//            totalTime = 0f
-//            for (result in weekResults){
-//                totalMoney += ((result.timeDuring / 60.0) * mainActivity.placeResults.where().equalTo("id", result.placeId).findFirst()!!.payByHour).toInt()
-//                totalTime += (result.timeDuring / 60.0).toFloat()
-//            }
-        }
-
-        leftButton.setOnClickListener {
-            endDayofWeek = endDayofWeek.minusDays(7)
-            startDayofWeek = startDayofWeek.minusDays(7)
-            updateView()
+    fun initLayout(){
+        if (mainActivity.placeResults.isEmpty()){
 
         }
-
-        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
-            context, RecyclerView.VERTICAL, false
-        )
-        rView.layoutManager = layoutManager
-
-        rView.adapter = rViewAdapter
-
-
+        else{
+        }
     }
 
     fun updateView(){
         val dayStr = startDayofWeek.toString() + " ~ " + endDayofWeek.toString()
         v.findViewById<TextView>(R.id.dateText).text = dayStr
-        weekResults = mainActivity.workResults.where().greaterThanOrEqualTo("date", Date.from(startDayofWeek.atStartOfDay(ZoneId.systemDefault()).toInstant())).lessThanOrEqualTo("date", Date.from(endDayofWeek.atStartOfDay(ZoneId.systemDefault()).toInstant())).findAll()
-        rViewAdapter.notifyDataSetChanged()
+        weekResults = mainActivity.workResults.where().equalTo("placeId", selectedPlace?.id).greaterThanOrEqualTo("date", Date.from(startDayofWeek.atStartOfDay(ZoneId.systemDefault()).toInstant())).lessThanOrEqualTo("date", Date.from(endDayofWeek.atStartOfDay(ZoneId.systemDefault()).toInstant())).findAll()
+        rViewAdapter = WorkListAdapter(weekResults, mainActivity.applicationContext, mainActivity.placeResults)
+        rView.adapter = rViewAdapter
         totalMoney = 0
         totalTime = 0f
         for (result in weekResults){
             totalMoney += ((result.timeDuring / 60.0) * mainActivity.placeResults.where().equalTo("id", result.placeId).findFirst()!!.payByHour).toInt()
             totalTime += (result.timeDuring / 60.0).toFloat()
         }
-        v.findViewById<TextView>(R.id.totalMoneyText).text = "총 " + totalMoney.toString() + "원"
-        v.findViewById<TextView>(R.id.totalTimeText).text = totalTime.toString() + "시간"
+        v.findViewById<TextView>(R.id.totalMoneyText).text = totalMoney.toString() + "원"
+        v.findViewById<TextView>(R.id.totalTimeText).text = "총 " + totalTime.toString() + "시간 근무"
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (mainActivity.placeResults.isNotEmpty()) {
+            selectedPlace = mainActivity.placeResults[0]
+            updateView()
+            rViewAdapter.itemClickListener = object : WorkListAdapter.OnItemClickListener{
+                override fun OnItemClick(
+                    holder: WorkListAdapter.ViewHolder,
+                    view: View,
+                    workId: String
+                ) {
+                    val intent = Intent(mainActivity, AddWorkActivity::class.java)
+                    intent.putExtra("workId", workId)
+                    startActivity(intent)
+                }
+            }
+
+            val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+                context, RecyclerView.VERTICAL, false
+            )
+            rView.layoutManager = layoutManager
+
+            //상단 알바 장소 선택 스피너
+            spinnerAdapter = ArrayAdapter(mainActivity.applicationContext, android.R.layout.simple_spinner_dropdown_item)
+            for(i in mainActivity.placeResults){
+                spinnerAdapter.add(i.name)
+            }
+            placeName.adapter = spinnerAdapter
+            placeName.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                    selectedPlace = mainActivity.placeResults[position]!!
+                    var color = 0
+                    when(selectedPlace!!.color){
+                        0-> color = R.color.red
+                        1-> color = R.color.orange
+                        2-> color = R.color.green
+                        3-> color = R.color.blue
+                        4-> color = R.color.purple
+                    }
+                    placeName.background.colorFilter = PorterDuffColorFilter(context!!.getColor(color), PorterDuff.Mode.MULTIPLY)
+                    updateView()
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+            }
+
+            rightButton.setOnClickListener {
+                endDayofWeek = endDayofWeek.plusDays(7)
+                startDayofWeek = startDayofWeek.plusDays(7)
+                updateView()
+            }
+
+            leftButton.setOnClickListener {
+                endDayofWeek = endDayofWeek.minusDays(7)
+                startDayofWeek = startDayofWeek.minusDays(7)
+                updateView()
+
+            }
+        }
+        else{
+            defaultText.visibility = View.VISIBLE
+        }
+
+
+
+    }
+
+
 }

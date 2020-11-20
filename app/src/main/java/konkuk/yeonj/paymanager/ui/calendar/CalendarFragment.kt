@@ -29,9 +29,11 @@ import konkuk.yeonj.paymanager.ui.setting.SettingListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import kotlinx.coroutines.selects.select
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
 
@@ -42,7 +44,7 @@ class CalendarFragment : Fragment() {
     lateinit var placeRViewAdapter:CalPlaceListAdapter
     lateinit var selectedWorkResult: RealmResults<Work>
     private lateinit var mainActivity: MainActivity
-
+    val dateFormat = DateTimeFormatter.ofPattern("yyyy년 MM월")
 
 
     override fun onCreateView(
@@ -101,7 +103,7 @@ class CalendarFragment : Fragment() {
         calendarView.setup(firstMonth, lastMonth, firstDayOfWeek)
         calendarView.scrollToMonth(currentMonth)
         calendarView.monthScrollListener = {
-            calendarMonthText.text = it.yearMonth.toString()
+            calendarMonthText.text = it.yearMonth.format(dateFormat)
         }
 
         // 아래 recyclerview
@@ -134,6 +136,7 @@ class CalendarFragment : Fragment() {
             override fun OnItemClick(holder: CalPlaceListAdapter.ViewHolder, view: View, pos: Int) {
                 val intent = Intent(mainActivity, AddWorkActivity::class.java)
                 intent.putExtra("placeId", mainActivity.placeResults[pos]!!.id)
+                intent.putExtra("selectedDay", Date.from(selectedDay.atStartOfDay(ZoneId.systemDefault()).toInstant()).time)
                 startActivity(intent)
             }
         }

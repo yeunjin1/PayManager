@@ -22,10 +22,11 @@ class AddWorkActivity : AppCompatActivity() {
     lateinit var realm:Realm
     var placeId: String? = null
     var workId: String? = null
+    var selectedDay = Date()
     lateinit var thisPlace: Place
     var thisWork: Work? = null
     val timeFormat = SimpleDateFormat("HH:mm")
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+    val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일")
     private var startHour = 12
     private var startMin = 0
     private var endHour = 12
@@ -49,6 +50,7 @@ class AddWorkActivity : AppCompatActivity() {
         realm = Realm.getDefaultInstance()
         //추가
         placeId = intent.getStringExtra("placeId")
+        selectedDay.time = intent.getLongExtra("selectedDay", 0L)
         Log.d("mytag", "placeId : " + placeId)
         //수정
         workId = intent.getStringExtra("workId")
@@ -68,6 +70,7 @@ class AddWorkActivity : AppCompatActivity() {
             //추가
             thisPlace = realm.where(Place::class.java).equalTo("id", placeId).findFirst()!!
             toolbar.title = thisPlace.name
+            dateText.text = dateFormat.format(selectedDay)
 
         }
 
@@ -98,7 +101,7 @@ class AddWorkActivity : AppCompatActivity() {
                 //추가
                 realm.beginTransaction()
                 val item = realm.createObject(Work::class.java, UUID.randomUUID().toString())
-                item.date = Date.from(LocalDate.of(2020, 11, 19).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                item.date = selectedDay
                 item.placeId = placeId!!
                 item.timePush = System.currentTimeMillis()
                 item.timeStart = startHour * 60 + startMin

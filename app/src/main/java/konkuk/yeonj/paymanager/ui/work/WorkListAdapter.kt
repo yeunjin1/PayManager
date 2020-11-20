@@ -69,4 +69,8 @@ class WorkListAdapter (realmResult: OrderedRealmCollection<Work>, val context: C
 //            holder.circleIcon.setColorFilter(context.getColor(color))
         }
     }
+
+    override fun getData(): OrderedRealmCollection<Work>? {
+        return super.getData()
+    }
 }

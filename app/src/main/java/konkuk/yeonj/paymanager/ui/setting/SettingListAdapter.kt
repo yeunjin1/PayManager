@@ -14,6 +14,7 @@ import io.realm.Realm
 import io.realm.RealmRecyclerViewAdapter
 import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.data.Place
+import konkuk.yeonj.paymanager.data.Work
 
 class SettingListAdapter (realmResult: OrderedRealmCollection<Place>, val context: Context) : RealmRecyclerViewAdapter<Place, SettingListAdapter.ViewHolder>(realmResult, true) {
     interface OnItemClickListener{
@@ -33,6 +34,10 @@ class SettingListAdapter (realmResult: OrderedRealmCollection<Place>, val contex
 
             itemView.setOnLongClickListener {
                 val realm = Realm.getDefaultInstance()
+
+                realm.beginTransaction()
+                realm.where(Work::class.java).equalTo("placeId", getItem(bindingAdapterPosition)?.id).findAll().deleteAllFromRealm()
+                realm.commitTransaction()
                 realm.beginTransaction()
                 getItem(bindingAdapterPosition)?.deleteFromRealm()
                 realm.commitTransaction()

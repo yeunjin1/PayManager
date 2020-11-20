@@ -43,10 +43,10 @@ class AddPlaceActivity : AppCompatActivity() {
         realm = Realm.getDefaultInstance()
 
         placeId = intent.getStringExtra("id")
+        initSpinner()
         if(placeId != ""){
             initLayout()
         }
-        initSpinner()
         initListener()
 
     }
