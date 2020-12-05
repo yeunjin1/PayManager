@@ -8,21 +8,22 @@
 
 
     <TextView
+        android:background="@color/colorPrimaryDark"
+        style="@style/ToolbarTitleText"
         android:id="@+id/calendarMonthText"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:gravity="center"
         android:text="2020년 11월"
-        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintBottom_toTopOf="@+id/day1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+
     <TextView
-        android:gravity="center"
         android:id="@+id/day1"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
+        style="@style/MondayTextView"
         android:text="@string/sun"
         app:layout_constraintEnd_toStartOf="@+id/day2"
         app:layout_constraintHorizontal_bias="0.5"
@@ -30,10 +31,8 @@
         app:layout_constraintTop_toBottomOf="@id/calendarMonthText" />
 
     <TextView
-        android:gravity="center"
+        style="@style/MondayTextView"
         android:id="@+id/day2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:text="@string/mon"
         app:layout_constraintBottom_toBottomOf="@id/day1"
         app:layout_constraintEnd_toStartOf="@+id/day3"
@@ -42,10 +41,8 @@
         app:layout_constraintTop_toTopOf="@id/day1" />
 
     <TextView
-        android:gravity="center"
+        style="@style/MondayTextView"
         android:id="@+id/day3"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:text="@string/tue"
         app:layout_constraintBottom_toBottomOf="@id/day1"
         app:layout_constraintEnd_toStartOf="@+id/day4"
@@ -54,10 +51,8 @@
         app:layout_constraintTop_toTopOf="@id/day1" />
 
     <TextView
-        android:gravity="center"
+        style="@style/MondayTextView"
         android:id="@+id/day4"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:text="@string/wed"
         app:layout_constraintBottom_toBottomOf="@id/day1"
         app:layout_constraintEnd_toStartOf="@+id/day5"
@@ -66,10 +61,8 @@
         app:layout_constraintTop_toTopOf="@id/day1" />
 
     <TextView
-        android:gravity="center"
+        style="@style/MondayTextView"
         android:id="@+id/day5"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:text="@string/thu"
         app:layout_constraintBottom_toBottomOf="@id/day1"
         app:layout_constraintEnd_toStartOf="@+id/day6"
@@ -78,10 +71,8 @@
         app:layout_constraintTop_toTopOf="@id/day1" />
 
     <TextView
-        android:gravity="center"
+        style="@style/MondayTextView"
         android:id="@+id/day6"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:text="@string/fri"
         app:layout_constraintBottom_toBottomOf="@id/day1"
         app:layout_constraintEnd_toStartOf="@+id/day7"
@@ -90,16 +81,26 @@
         app:layout_constraintTop_toTopOf="@id/day1" />
 
     <TextView
-        android:gravity="center"
+        style="@style/MondayTextView"
         android:id="@+id/day7"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:text="@string/sat"
         app:layout_constraintBottom_toBottomOf="@id/day1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/day6"
         app:layout_constraintTop_toTopOf="@id/day1" />
+
+    <View
+        android:id="@+id/line1"
+        android:background="@color/lightGray"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/calendarView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/day1" />
 
     <com.kizitonwose.calendarview.CalendarView
         android:id="@+id/calendarView"
@@ -110,7 +111,18 @@
         app:cv_orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/day1" />
+        app:layout_constraintTop_toBottomOf="@id/line1" />
+    <View
+        android:id="@+id/line2"
+        android:background="@color/lightGray"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/workRView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendarView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/workRView"

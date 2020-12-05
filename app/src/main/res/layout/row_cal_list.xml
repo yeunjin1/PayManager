@@ -16,6 +16,7 @@
         app:srcCompat="@drawable/circle_icon" />
 
     <TextView
+        style="@style/SmallItemListText"
         android:id="@+id/placeText"
         android:layout_width="wrap_content"
         android:layout_height="34dp"
@@ -28,6 +29,7 @@
 
     <TextView
         android:id="@+id/timeText"
+        style="@style/SmallItemListText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="12:00-19:00"
@@ -41,6 +43,7 @@
         android:id="@+id/duringText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/SmallItemListText"
         android:text="7시간"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/timeText"
@@ -51,6 +54,7 @@
         android:id="@+id/moneyText"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        style="@style/SmallItemListText"
         android:gravity="center_vertical|end"
         android:text="27000원"
         app:layout_constraintBottom_toBottomOf="parent"

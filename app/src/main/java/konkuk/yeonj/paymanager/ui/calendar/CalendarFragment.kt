@@ -110,7 +110,7 @@ class CalendarFragment : Fragment() {
                     mainActivity.applicationContext
                 )
                 if(day.owner == DayOwner.THIS_MONTH){
-                    container.textView.setTextColor(Color.DKGRAY)
+                    container.textView.setTextColor(Color.BLACK)
                     when{
                         selectedDay.value!! == day.date -> {
                             container.view.background = ContextCompat.getDrawable(context!!, R.color.colorPrimaryLight)
@@ -121,9 +121,8 @@ class CalendarFragment : Fragment() {
                     }
                 }
                 else{
-                    container.textView.setTextColor(Color.GRAY)
+                    container.textView.setTextColor(Color.LTGRAY)
                 }
-
             }
 
             override fun create(view: View) = DayViewContainer(view)

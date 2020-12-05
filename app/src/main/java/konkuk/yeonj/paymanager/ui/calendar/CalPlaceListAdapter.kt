@@ -14,6 +14,7 @@ import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
 import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.data.Place
+import konkuk.yeonj.paymanager.toColorFilter
 
 class CalPlaceListAdapter(realmResult: OrderedRealmCollection<Place>, val context: Context) : RealmRecyclerViewAdapter<Place, CalPlaceListAdapter.ViewHolder>(realmResult, true) {
     interface OnItemClickListener{
@@ -48,7 +49,7 @@ class CalPlaceListAdapter(realmResult: OrderedRealmCollection<Place>, val contex
                 3-> color = R.color.blue
                 4-> color = R.color.purple
             }
-            holder.placeText.background.colorFilter = PorterDuffColorFilter(context.getColor(color), PorterDuff.Mode.MULTIPLY)
+            holder.placeText.background.colorFilter = context.getColor(color).toColorFilter()
         }
     }
 }

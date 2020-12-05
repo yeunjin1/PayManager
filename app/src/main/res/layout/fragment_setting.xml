@@ -7,6 +7,7 @@
     tools:context=".ui.setting.SettingFragment">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        android:background="@color/colorPrimaryDark"
         app:title="@string/setting_title"
         android:layout_width="match_parent"
         android:gravity="center"
@@ -17,12 +18,11 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <TextView
+                style="@style/ToolbarTitleText"
                 android:id="@+id/text_notifications"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:text="@string/setting_title"
                 android:textAlignment="center"
                 android:textSize="20sp"
@@ -32,15 +32,18 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:layout_marginEnd="8dp"
                 android:id="@+id/addButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:foregroundTint="@color/cardview_dark_background"
-                android:src="@android:drawable/ic_input_add"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="15dp"
+                android:src="@drawable/add"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@android:color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.appcompat.widget.Toolbar>

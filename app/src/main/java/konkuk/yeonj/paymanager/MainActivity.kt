@@ -27,9 +27,6 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)
-        val appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.navigation_calendar, R.id.navigation_work, R.id.navigation_setting))
-//        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         Realm.init(applicationContext)
@@ -39,8 +36,6 @@ class MainActivity : AppCompatActivity() {
 
         realm = Realm.getDefaultInstance()
 
-        //임의로 근무 데이터 넣기
-//        initTempData()
 
         getDataFromRealm()
 

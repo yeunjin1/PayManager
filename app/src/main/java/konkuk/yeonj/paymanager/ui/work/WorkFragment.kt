@@ -84,7 +84,6 @@ class WorkFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
                     selectedPlace = mainActivity.placeResults[position]!!
                     var color = 0
                     when(selectedPlace!!.color){
@@ -94,6 +93,7 @@ class WorkFragment : Fragment() {
                         3-> color = R.color.blue
                         4-> color = R.color.purple
                     }
+                    (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
                     placeName.background.colorFilter = context!!.getColor(color).toColorFilter()
                     updateView()
                 }

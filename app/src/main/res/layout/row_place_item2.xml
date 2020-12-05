@@ -7,6 +7,7 @@
     android:layout_height="40dp">
 
     <TextView
+        style="@style/PlaceButton"
         android:id="@+id/placeItemText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,10 +15,7 @@
         android:paddingBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="@drawable/place_button_background"
-        android:gravity="center"
         android:text="hi"
-        android:textColor="@android:color/white"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

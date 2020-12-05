@@ -3,13 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="100dp">
     <TextView
+        style="@style/PlaceButton"
         android:id="@+id/placeItemText"
-        android:text="hi"
-        android:gravity="center"
         android:textSize="30sp"
-        android:textColor="@android:color/white"
         android:layout_margin="8dp"
-        android:background="@drawable/place_button_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

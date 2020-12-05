@@ -57,7 +57,6 @@ class CalListAdapter (val data: ArrayList<Work>, val context: Context) : Recycle
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (holder is ViewHolder) {
             val item = data[position]!!
-            Log.d("mytag", item.toString())
             holder.placeText.text = item.place?.name
             holder.timeText.text = item.timeStart.convertToTimeString() + " ~ " + item.timeEnd.convertToTimeString()
             holder.duringText.text = String.format("%.1f", item.timeDuring / 60.0) + "시간"

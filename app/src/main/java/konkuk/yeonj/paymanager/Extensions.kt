@@ -22,3 +22,4 @@ fun LocalDate.convertToDate(): Date {
 fun Int.toColorFilter(): PorterDuffColorFilter{
     return PorterDuffColorFilter(this, PorterDuff.Mode.MULTIPLY)
 }
+

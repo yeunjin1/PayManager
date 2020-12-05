@@ -6,9 +6,22 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:timePickerStyle">@style/MyTimePickerTheme</item>
+        <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
+        <item name="android:editTextStyle">@style/customEditTextFontStyle</item>
     </style>
 
+<!--    custom font 적용-->
+    <style name="customTextViewFontStyle" parent="@android:style/Widget.DeviceDefault.TextView">
+        <item name="android:fontFamily">@font/font_bold</item>
+    </style>
+    <style name="customEditTextFontStyle" parent="@android:style/Widget.DeviceDefault.EditText">
+        <item name="android:fontFamily">@font/font_bold</item>
+    </style>
+
+
+
     <style name="SettingTextView"  parent="@android:style/Widget.TextView">
+        <item name="fontFamily">@font/font_medium</item>
         <item name="android:textSize">25sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">50dp</item>
@@ -18,6 +31,7 @@
     </style>
 
     <style name="TimePickerButton" parent="@android:style/Widget.TextView">
+        <item name="fontFamily">@font/font_bold</item>
         <item name="android:background">@drawable/time_picker_background</item>
         <item name="android:text">12:00</item>
         <item name="android:textSize">30sp</item>
@@ -31,6 +45,7 @@
     </style>
 
     <style name="TimeEditText" parent="@android:style/Widget.EditText">
+        <item name="fontFamily">@font/font_bold</item>
         <item name="android:background">@null</item>
         <item name="android:ems">7</item>
         <item name="android:gravity">end</item>
@@ -42,12 +57,39 @@
         <item name="android:textColor">@android:color/darker_gray</item>
     </style>
 
-
-
     <style name="MyTimePickerTheme" parent="android:Widget.Material.Light.TimePicker">
         <item name="android:timePickerMode">spinner</item>
     </style>
 
-
-
+<!--    CalendarFragment-->
+<!--    요일 텍스트-->
+    <style name="MondayTextView"  parent="@android:style/Widget.TextView">
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/font_bold</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+<!--    캘린더 하단 리스트 아이템 텍스트-->
+    <style name="SmallItemListText" parent="@android:style/Widget.TextView">
+        <item name="android:fontFamily">@font/font_bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+<!--    동그란 색깔 버튼-->
+    <style name="PlaceButton"  parent="@android:style/Widget.TextView">
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/font_extra_bold</item>
+        <item name="android:background">@drawable/place_button_background</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+<!--    toolbar title-->
+    <style name="ToolbarTitleText"  parent="@android:style/Widget.TextView">
+        <item name="android:fontFamily">@font/font_extra_bold</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+    </style>
 </resources>

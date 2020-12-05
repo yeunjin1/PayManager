@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FAD742</color>
+    <color name="colorPrimary">#FAB700</color>
     <color name="colorPrimaryLight">#FAF4A3</color>
     <color name="colorPrimaryDark">#FAB700</color>
     <color name="colorAccent">#03DAC5</color>
@@ -10,4 +10,8 @@
     <color name="green">@android:color/holo_green_light</color>
     <color name="blue">@android:color/holo_blue_light</color>
     <color name="purple">#EBB2F0</color>
+
+    <color name="lightGray">#FFCCCCCC</color>
+    <color name="darkGray">#FF444444</color>
+    <color name="gray">#FF888888</color>
 </resources>
