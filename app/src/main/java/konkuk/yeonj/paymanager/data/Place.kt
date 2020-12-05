@@ -20,4 +20,5 @@ open class Place : RealmObject() {
     var dTimeEnd: Long = 0
     var timePush: Long = 0
 
+
 }

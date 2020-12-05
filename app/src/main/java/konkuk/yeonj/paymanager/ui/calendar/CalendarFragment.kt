@@ -1,50 +1,48 @@
 package konkuk.yeonj.paymanager.ui.calendar
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kizitonwose.calendarview.model.CalendarDay
-import com.kizitonwose.calendarview.model.CalendarMonth
-import com.kizitonwose.calendarview.model.InDateStyle
-import com.kizitonwose.calendarview.model.OutDateStyle
+import com.kizitonwose.calendarview.CalendarView
+import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
-import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
-import com.kizitonwose.calendarview.ui.MonthScrollListener
+import com.kizitonwose.calendarview.ui.ViewContainer
 import io.realm.RealmResults
 import io.realm.Sort
 import konkuk.yeonj.paymanager.MainActivity
 import konkuk.yeonj.paymanager.R
+import konkuk.yeonj.paymanager.convertToDate
 import konkuk.yeonj.paymanager.data.Work
-import konkuk.yeonj.paymanager.ui.setting.AddPlaceActivity
-import konkuk.yeonj.paymanager.ui.setting.SettingListAdapter
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.calendar_day_layout.*
 import kotlinx.android.synthetic.main.fragment_calendar.*
-import kotlinx.coroutines.selects.select
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
 
 class CalendarFragment : Fragment() {
     lateinit var v:View
-    var selectedDay = LocalDate.now()
+    private var oldDate: LocalDate? = null
+    private var selectedDay: MutableLiveData<LocalDate> = MutableLiveData()
     lateinit var rViewAdapter: CalListAdapter
     lateinit var placeRViewAdapter:CalPlaceListAdapter
-    lateinit var selectedWorkResult: RealmResults<Work>
+    lateinit var selectedWorkResult: ArrayList<Work>
     private lateinit var mainActivity: MainActivity
-    val dateFormat = DateTimeFormatter.ofPattern("yyyy년 MM월")
+    private val dateFormat = DateTimeFormatter.ofPattern("yyyy년 MM월")
 
 
     override fun onCreateView(
@@ -53,43 +51,79 @@ class CalendarFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         v = inflater.inflate(R.layout.fragment_calendar, container, false)
-        init()
+        mainActivity = activity as MainActivity
+        selectedDay.value = LocalDate.now()
+        // 선택한 현재 날짜 가져오기
+        selectedWorkResult = mainActivity.getWorkListByDate(selectedDay.value!!.convertToDate())
+        val calView = v.findViewById<CalendarView>(R.id.calendarView)
+        selectedDay.observe(this, {
+            if (oldDate != null) calendarView.notifyDateChanged(oldDate!!)
+            oldDate = it
+            calView.notifyDateChanged(it)
+            selectedWorkResult.clear()
+            selectedWorkResult.addAll(mainActivity.getWorkListByDate(selectedDay.value!!.convertToDate()))
+            rViewAdapter.notifyDataSetChanged()
+        })
+        // work 추가, 삭제 시 업데이트
+        mainActivity.workResults.addChangeListener { _, _ ->
+            calView.notifyDateChanged(selectedDay.value!!)
+            selectedWorkResult.clear()
+            selectedWorkResult.addAll(mainActivity.getWorkListByDate(selectedDay.value!!.convertToDate()))
+            rViewAdapter.notifyDataSetChanged()
+        }
         return v
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        selectedWorkResult = mainActivity.workResults.where().equalTo("date",Date.from(selectedDay.atStartOfDay(
-            ZoneId.systemDefault()).toInstant())).findAll()!!.sort("timePush", Sort.ASCENDING)
+        initCalendarView()
+        initWorkRView()
+        initPlaceRView()
+    }
+
+    private fun initCalendarView(){
+        class DayViewContainer(view: View) : ViewContainer(view) {
+            val textView = view.findViewById<TextView>(R.id.calendarDayText)
+            val rView = view.findViewById<RecyclerView>(R.id.circleListView)
+            val tranView = view.findViewById<View>(R.id.tranView)
+            lateinit var day:CalendarDay
+            init{
+                tranView.setOnClickListener {
+                    if (day.owner == DayOwner.THIS_MONTH && selectedDay.value!! != day.date){
+                        selectedDay.value = day.date
+                    }
+                }
+            }
+        }
 
         //캘린더 각 날짜의 뷰의 데이터 바인딩
         calendarView.inDateStyle = InDateStyle.ALL_MONTHS
-        calendarView.outDateStyle = OutDateStyle.END_OF_GRID
+        calendarView.outDateStyle = OutDateStyle.END_OF_ROW
         calendarView.dayBinder = object : DayBinder<DayViewContainer> {
             override fun bind(container: DayViewContainer, day: CalendarDay) {
+                container.day = day
                 container.textView.text = day.date.dayOfMonth.toString()
-                container.view.setOnClickListener {
-                    it.background = ContextCompat.getDrawable(context!!, R.color.colorPrimaryLight)
 
-                    selectedDay = day.date
-                    selectedWorkResult = mainActivity.workResults.where().equalTo("date", Date.from(selectedDay.atStartOfDay(ZoneId.systemDefault()).toInstant())).findAll()!!.sort("timePush", Sort.ASCENDING)
-                    Log.d("mytag", selectedDay.toString())
-                    Log.d("mytag", selectedWorkResult.toString())
-                    //ㅇ여기코드좀 손봐야할ㄷ스 너무 대작업
-                    rViewAdapter = CalListAdapter(selectedWorkResult, mainActivity.applicationContext, mainActivity.placeResults)
-                    rViewAdapter.itemClickListener = object : CalListAdapter.OnItemClickListener{
-                        override fun OnItemClick(
-                            holder: CalListAdapter.ViewHolder,
-                            view: View,
-                            workId: String
-                        ) {
-                            val intent = Intent(mainActivity, AddWorkActivity::class.java)
-                            intent.putExtra("workId", workId)
-                            startActivity(intent)
+                container.rView.layoutManager = GridLayoutManager(mainActivity.applicationContext, 3)
+                container.rView.adapter = CircleGridAdapter(
+                    mainActivity.getWorkListByDate(day.date.convertToDate()),
+                    mainActivity.applicationContext
+                )
+                if(day.owner == DayOwner.THIS_MONTH){
+                    container.textView.setTextColor(Color.DKGRAY)
+                    when{
+                        selectedDay.value!! == day.date -> {
+                            container.view.background = ContextCompat.getDrawable(context!!, R.color.colorPrimaryLight)
+                        }
+                        else->{
+                            container.view.background = null
                         }
                     }
-                    rView.adapter = rViewAdapter
                 }
+                else{
+                    container.textView.setTextColor(Color.GRAY)
+                }
+
             }
 
             override fun create(view: View) = DayViewContainer(view)
@@ -105,13 +139,15 @@ class CalendarFragment : Fragment() {
         calendarView.monthScrollListener = {
             calendarMonthText.text = it.yearMonth.format(dateFormat)
         }
+    }
 
+    private fun initWorkRView(){
         // 아래 recyclerview
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
             context, RecyclerView.VERTICAL, false
         )
-        rView.layoutManager = layoutManager
-        rViewAdapter = CalListAdapter(selectedWorkResult, mainActivity.applicationContext, mainActivity.placeResults)
+        workRView.layoutManager = layoutManager
+        rViewAdapter = CalListAdapter(selectedWorkResult, mainActivity.applicationContext)
         rViewAdapter.itemClickListener = object : CalListAdapter.OnItemClickListener{
             override fun OnItemClick(
                 holder: CalListAdapter.ViewHolder,
@@ -123,26 +159,25 @@ class CalendarFragment : Fragment() {
                 startActivity(intent)
             }
         }
-        rView.adapter = rViewAdapter
+        workRView.adapter = rViewAdapter
+    }
 
+    private fun initPlaceRView(){
         // 가로 탭 recyclerview
-        val layoutManager2 = androidx.recyclerview.widget.LinearLayoutManager(
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
             context, RecyclerView.HORIZONTAL, false
         )
-        placeRView.layoutManager = layoutManager2
+        placeRView.layoutManager = layoutManager
         placeRViewAdapter = CalPlaceListAdapter(mainActivity.placeResults, mainActivity.applicationContext)
         placeRView.adapter = placeRViewAdapter
         placeRViewAdapter.itemClickListener= object : CalPlaceListAdapter.OnItemClickListener{
             override fun OnItemClick(holder: CalPlaceListAdapter.ViewHolder, view: View, pos: Int) {
                 val intent = Intent(mainActivity, AddWorkActivity::class.java)
                 intent.putExtra("placeId", mainActivity.placeResults[pos]!!.id)
-                intent.putExtra("selectedDay", Date.from(selectedDay.atStartOfDay(ZoneId.systemDefault()).toInstant()).time)
+                intent.putExtra("selectedDay", selectedDay.value!!.convertToDate().time)
                 startActivity(intent)
             }
         }
     }
 
-    private fun init(){
-        mainActivity = activity as MainActivity
-    }
 }

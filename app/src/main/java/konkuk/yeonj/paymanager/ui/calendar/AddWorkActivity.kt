@@ -14,17 +14,13 @@ import kotlinx.android.synthetic.main.activity_add_work.*
 import kotlinx.android.synthetic.main.activity_add_work.confirm_button
 import kotlinx.android.synthetic.main.activity_add_work.toolbar
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
 
 class AddWorkActivity : AppCompatActivity() {
     lateinit var realm:Realm
-    var placeId: String? = null
-    var workId: String? = null
+    var place: Place? = null
+    var work: Work? = null
     var selectedDay = Date()
-    lateinit var thisPlace: Place
-    var thisWork: Work? = null
     val timeFormat = SimpleDateFormat("HH:mm")
     val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일")
     private var startHour = 12
@@ -49,14 +45,15 @@ class AddWorkActivity : AppCompatActivity() {
     fun init(){
         realm = Realm.getDefaultInstance()
         //추가
-        placeId = intent.getStringExtra("placeId")
-        selectedDay.time = intent.getLongExtra("selectedDay", 0L)
-        Log.d("mytag", "placeId : " + placeId)
+        val placeId = intent.getStringExtra("placeId")
+        if(placeId != null)
+            place = realm.where(Place::class.java).equalTo("id", placeId).findFirst()
         //수정
-        workId = intent.getStringExtra("workId")
-        //해당 날짜도 넘겨 받아야함
+        val workId = intent.getStringExtra("workId")
+        if(workId != null)
+            work = realm.where(Work::class.java).equalTo("id", workId).findFirst()
 
-
+        selectedDay.time = intent.getLongExtra("selectedDay", 0L)
 
         initLayout()
         initListener()
@@ -66,43 +63,39 @@ class AddWorkActivity : AppCompatActivity() {
     }
 
     fun initLayout(){
-        if (placeId != null){
+        if(place != null) {
             //추가
-            thisPlace = realm.where(Place::class.java).equalTo("id", placeId).findFirst()!!
-            toolbar.title = thisPlace.name
+            toolbar.title = place!!.name
             dateText.text = dateFormat.format(selectedDay)
-
         }
 
-        if (workId != null){
+        if(work != null) {
             //수정
+            toolbar.title = work!!.place?.name
+            startTime.text = work!!.timeStart.convertToTimeString()
+            endTime.text = work!!.timeEnd.convertToTimeString()
+            dateText.text = dateFormat.format(work!!.date)
+            breakEdit.setText(work!!.breakTime.toString())
+            nightEdit.setText(work!!.nightTime.toString())
+            overEdit.setText(work!!.overTime.toString())
 
-            thisWork = realm.where(Work::class.java).equalTo("id", workId).findFirst()!!
-            thisPlace = realm.where(Place::class.java).equalTo("id", thisWork!!.placeId).findFirst()!!
-            toolbar.title = thisPlace.name
-            startTime.text = thisWork!!.timeStart.convertToTimeString()
-            endTime.text = thisWork!!.timeEnd.convertToTimeString()
-            dateText.text = dateFormat.format(thisWork!!.date)
-            breakEdit.setText(thisWork!!.breakTime.toString())
-            nightEdit.setText(thisWork!!.nightTime.toString())
-            overEdit.setText(thisWork!!.overTime.toString())
-
-            startHour = thisWork!!.timeStart / 60
-            startMin = thisWork!!.timeStart % 60
-            endHour = thisWork!!.timeEnd / 60
-            endMin = thisWork!!.timeEnd % 60
+            startHour = work!!.timeStart / 60
+            startMin = work!!.timeStart % 60
+            endHour = work!!.timeEnd / 60
+            endMin = work!!.timeEnd % 60
 
         }
     }
 
     fun initListener(){
         confirm_button.setOnClickListener{
-            if (placeId != null){
+            if(place != null){
                 //추가
                 realm.beginTransaction()
                 val item = realm.createObject(Work::class.java, UUID.randomUUID().toString())
                 item.date = selectedDay
-                item.placeId = placeId!!
+                item.placeId = place!!.id
+                item.place = place!!
                 item.timePush = System.currentTimeMillis()
                 item.timeStart = startHour * 60 + startMin
                 item.timeEnd = endHour * 60 + endMin
@@ -115,16 +108,16 @@ class AddWorkActivity : AppCompatActivity() {
                 finish()
             }
 
-            if(workId != null){
+            if(work != null) {
                 //수정
                 realm.beginTransaction()
-                thisWork!!.timePush = System.currentTimeMillis()
-                thisWork!!.timeStart = startHour * 60 + startMin
-                thisWork!!.timeEnd = endHour * 60 + endMin
-                thisWork!!.timeDuring = thisWork!!.timeEnd - thisWork!!.timeStart
-                thisWork!!.breakTime = breakEdit.text.toString().toInt()
-                thisWork!!.nightTime = nightEdit.text.toString().toInt()
-                thisWork!!.overTime = overEdit.text.toString().toInt()
+                work!!.timePush = System.currentTimeMillis()
+                work!!.timeStart = startHour * 60 + startMin
+                work!!.timeEnd = endHour * 60 + endMin
+                work!!.timeDuring = work!!.timeEnd - work!!.timeStart
+                work!!.breakTime = breakEdit.text.toString().toInt()
+                work!!.nightTime = nightEdit.text.toString().toInt()
+                work!!.overTime = overEdit.text.toString().toInt()
                 realm.commitTransaction()
                 finish()
             }
@@ -160,5 +153,8 @@ class AddWorkActivity : AppCompatActivity() {
         }
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
+    }
 }

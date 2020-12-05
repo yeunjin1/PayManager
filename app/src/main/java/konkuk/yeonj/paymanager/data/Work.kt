@@ -10,8 +10,6 @@ open class Work : RealmObject() {
 
     var date: Date = Date()
 
-    //근무지 아이디
-    var placeId: String = ""
     //근무 시작, 끝 시간, 근무 시간(분)
     var timeStart: Int = 0
     var timeEnd: Int = 0
@@ -23,6 +21,7 @@ open class Work : RealmObject() {
     var overTime : Int = 0
 
     var timePush: Long = 0
-
-
+    //근무지
+    var placeId: String = ""
+    var place: Place? = null
 }

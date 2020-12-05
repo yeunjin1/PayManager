@@ -61,7 +61,6 @@ class AddPlaceActivity : AppCompatActivity() {
         nightPaySwitch.isChecked = item.nightPay
         overPaySwitch.isChecked = item.overPay
         taxPaySwitch.isChecked = item.taxPay
-
     }
 
     fun initSpinner(){

@@ -125,7 +125,7 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rView"
+        android:id="@+id/workListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

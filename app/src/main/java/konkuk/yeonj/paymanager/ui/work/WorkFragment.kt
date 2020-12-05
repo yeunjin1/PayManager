@@ -5,31 +5,27 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.SpinnerAdapter
 import android.widget.TextView
+import androidx.core.graphics.toColor
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import io.realm.Realm
 import io.realm.RealmResults
 import konkuk.yeonj.paymanager.MainActivity
 import konkuk.yeonj.paymanager.R
+import konkuk.yeonj.paymanager.convertToDate
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
+import konkuk.yeonj.paymanager.toColorFilter
 import konkuk.yeonj.paymanager.ui.calendar.AddWorkActivity
+import kotlinx.android.synthetic.main.fragment_calendar.*
 import kotlinx.android.synthetic.main.fragment_work.*
-import kotlinx.android.synthetic.main.fragment_work.rView
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.ZoneId
-import java.util.*
 
 class WorkFragment : Fragment() {
     lateinit var v:View
@@ -43,8 +39,6 @@ class WorkFragment : Fragment() {
     lateinit var spinnerAdapter: ArrayAdapter<String>
     var selectedPlace: Place? = null
 
-
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -55,48 +49,12 @@ class WorkFragment : Fragment() {
         return v
     }
 
-    fun init(){
-        mainActivity = activity as MainActivity
-        initDay()
-        initLayout()
-    }
-
-    fun initDay(){
-        val now = LocalDate.now()
-        startDayofWeek = now.with(DayOfWeek.MONDAY).minusDays(1)
-        endDayofWeek = now.with(DayOfWeek.FRIDAY)
-    }
-
-    fun initLayout(){
-        if (mainActivity.placeResults.isEmpty()){
-
-        }
-        else{
-        }
-    }
-
-    fun updateView(){
-        val dayStr = startDayofWeek.toString() + " ~ " + endDayofWeek.toString()
-        v.findViewById<TextView>(R.id.dateText).text = dayStr
-        weekResults = mainActivity.workResults.where().equalTo("placeId", selectedPlace?.id).greaterThanOrEqualTo("date", Date.from(startDayofWeek.atStartOfDay(ZoneId.systemDefault()).toInstant())).lessThanOrEqualTo("date", Date.from(endDayofWeek.atStartOfDay(ZoneId.systemDefault()).toInstant())).findAll()
-        rViewAdapter = WorkListAdapter(weekResults, mainActivity.applicationContext, mainActivity.placeResults)
-        rView.adapter = rViewAdapter
-        totalMoney = 0
-        totalTime = 0f
-        for (result in weekResults){
-            totalMoney += ((result.timeDuring / 60.0) * mainActivity.placeResults.where().equalTo("id", result.placeId).findFirst()!!.payByHour).toInt()
-            totalTime += (result.timeDuring / 60.0).toFloat()
-        }
-        v.findViewById<TextView>(R.id.totalMoneyText).text = totalMoney.toString() + "원"
-        v.findViewById<TextView>(R.id.totalTimeText).text = "총 " + totalTime.toString() + "시간 근무"
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (mainActivity.placeResults.isNotEmpty()) {
             selectedPlace = mainActivity.placeResults[0]
             updateView()
-            rViewAdapter.itemClickListener = object : WorkListAdapter.OnItemClickListener{
+            rViewAdapter.itemClickListener = object : WorkListAdapter.OnItemClickListener {
                 override fun OnItemClick(
                     holder: WorkListAdapter.ViewHolder,
                     view: View,
@@ -111,7 +69,7 @@ class WorkFragment : Fragment() {
             val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
                 context, RecyclerView.VERTICAL, false
             )
-            rView.layoutManager = layoutManager
+            workListView.layoutManager = layoutManager
 
             //상단 알바 장소 선택 스피너
             spinnerAdapter = ArrayAdapter(mainActivity.applicationContext, android.R.layout.simple_spinner_dropdown_item)
@@ -136,7 +94,7 @@ class WorkFragment : Fragment() {
                         3-> color = R.color.blue
                         4-> color = R.color.purple
                     }
-                    placeName.background.colorFilter = PorterDuffColorFilter(context!!.getColor(color), PorterDuff.Mode.MULTIPLY)
+                    placeName.background.colorFilter = context!!.getColor(color).toColorFilter()
                     updateView()
                 }
 
@@ -160,10 +118,48 @@ class WorkFragment : Fragment() {
         else{
             defaultText.visibility = View.VISIBLE
         }
-
-
-
     }
+
+    fun init(){
+        mainActivity = activity as MainActivity
+        initDay()
+        initLayout()
+    }
+
+    private fun initDay(){
+        val now = LocalDate.now()
+        startDayofWeek = now.with(DayOfWeek.MONDAY).minusDays(1)
+        endDayofWeek = now.with(DayOfWeek.SATURDAY)
+    }
+
+    fun initLayout(){
+        if (mainActivity.placeResults.isEmpty()){
+
+        }
+        else{
+        }
+    }
+
+    fun updateView(){
+        val dayStr = "$startDayofWeek ~ $endDayofWeek"
+        v.findViewById<TextView>(R.id.dateText).text = dayStr
+        weekResults = mainActivity.workResults.where()
+            .equalTo("placeId", selectedPlace!!.id)
+            .greaterThanOrEqualTo("date", startDayofWeek.convertToDate())
+            .lessThanOrEqualTo("date", endDayofWeek.convertToDate()).findAll()
+        rViewAdapter = WorkListAdapter(weekResults, mainActivity.applicationContext, mainActivity.placeResults)
+        workListView.adapter = rViewAdapter
+        totalMoney = 0
+        totalTime = 0f
+        for (result in weekResults){
+            totalMoney += ((result.timeDuring / 60.0) * result.place!!.payByHour).toInt()
+            totalTime += (result.timeDuring / 60.0).toFloat()
+        }
+        v.findViewById<TextView>(R.id.totalMoneyText).text = totalMoney.toString() + "원"
+        v.findViewById<TextView>(R.id.totalTimeText).text = "총 " + totalTime.toString() + "시간 근무"
+    }
+
+
 
 
 }

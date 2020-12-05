@@ -53,10 +53,9 @@ class WorkListAdapter (realmResult: OrderedRealmCollection<Work>, val context: C
     override fun onBindViewHolder(holder: WorkListAdapter.ViewHolder, position: Int) {
         if (holder is WorkListAdapter.ViewHolder) {
             val item = getItem(position)!!
-            val placeItem = placeResults.where().equalTo("id", item.placeId).findFirst()!!
             holder.dateText.text = dateFormat.format(item.date)
             holder.duringTimeText.text = String.format("%.1f", item.timeDuring / 60.0) + "시간"
-            holder.moneyText.text = (placeItem.payByHour * (item.timeDuring / 60.0)).toInt().toString() + "원"
+            holder.moneyText.text = (item.place!!.payByHour * (item.timeDuring / 60.0)).toInt().toString() + "원"
             holder.timeText.text = item.timeStart.convertToTimeString() + " ~ " + item.timeEnd.convertToTimeString()
 //            var color = 0
 //            when(placeItem.color){

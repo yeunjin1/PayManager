@@ -113,7 +113,7 @@
         app:layout_constraintTop_toBottomOf="@id/day1" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rView"
+        android:id="@+id/workRView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scrollbars="vertical"
@@ -133,7 +133,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rView" />
+        app:layout_constraintTop_toBottomOf="@+id/workRView" />
 
 
 

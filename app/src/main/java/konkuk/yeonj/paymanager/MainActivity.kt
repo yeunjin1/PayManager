@@ -27,8 +27,6 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(setOf(
                 R.id.navigation_calendar, R.id.navigation_work, R.id.navigation_setting))
 //        setupActionBarWithNavController(navController, appBarConfiguration)
@@ -69,5 +67,12 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
+    fun getWorkListByDate(date:Date): ArrayList<Work> {
+        val list = arrayListOf<Work>()
+        val result = workResults.where()
+            .equalTo("date", date)
+            .findAll()!!.sort("timePush", Sort.ASCENDING)
+        list.addAll(realm.copyFromRealm(result))
+        return list
+    }
 }

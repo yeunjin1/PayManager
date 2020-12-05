@@ -17,7 +17,7 @@ import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
 import java.time.format.DateTimeFormatter
 
-class CalListAdapter (realmResult: OrderedRealmCollection<Work>, val context: Context, val placeResults: RealmResults<Place>) : RealmRecyclerViewAdapter<Work, CalListAdapter.ViewHolder>(realmResult, true) {
+class CalListAdapter (val data: ArrayList<Work>, val context: Context) : RecyclerView.Adapter<CalListAdapter.ViewHolder>() {
     interface OnItemClickListener{
         fun OnItemClick(holder: CalListAdapter.ViewHolder, view:View, workId: String)
     }
@@ -39,10 +39,14 @@ class CalListAdapter (realmResult: OrderedRealmCollection<Work>, val context: Co
             circleIcon = itemView.findViewById(R.id.circleIcon)
 
             itemView.setOnClickListener {
-                itemClickListener?.OnItemClick(this, it, getItem(bindingAdapterPosition)!!.id)
+                itemClickListener?.OnItemClick(this, it, data[bindingAdapterPosition]!!.id)
                 Log.d("mytag", "click")
             }
         }
+    }
+
+    override fun getItemCount(): Int {
+        return data.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -52,14 +56,14 @@ class CalListAdapter (realmResult: OrderedRealmCollection<Work>, val context: Co
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (holder is ViewHolder) {
-            val item = getItem(position)!!
-            val placeItem = placeResults.where().equalTo("id", item.placeId).findFirst()!!
-            holder.placeText.text = placeItem.name
+            val item = data[position]!!
+            Log.d("mytag", item.toString())
+            holder.placeText.text = item.place?.name
             holder.timeText.text = item.timeStart.convertToTimeString() + " ~ " + item.timeEnd.convertToTimeString()
             holder.duringText.text = String.format("%.1f", item.timeDuring / 60.0) + "시간"
-            holder.moneyText.text = (placeItem.payByHour * (item.timeDuring / 60.0)).toInt().toString() + "원"
+            holder.moneyText.text = (item.place!!.payByHour * (item.timeDuring / 60.0)).toInt().toString() + "원"
             var color = 0
-            when(placeItem.color){
+            when(item.place!!.color){
                 0-> color = R.color.red
                 1-> color = R.color.orange
                 2-> color = R.color.green

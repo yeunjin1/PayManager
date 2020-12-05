@@ -41,7 +41,7 @@ class SettingFragment : Fragment() {
             context, RecyclerView.VERTICAL, false
         )
         settingRView.layoutManager = layoutManager
-        rViewAdapter = SettingListAdapter(mainActivity.placeResults, activity!!.applicationContext)
+        rViewAdapter = SettingListAdapter(mainActivity.placeResults, requireContext())
         settingRView.adapter = rViewAdapter
         rViewAdapter.itemClickListener = object :SettingListAdapter.OnItemClickListener{
             override fun OnItemClick(
