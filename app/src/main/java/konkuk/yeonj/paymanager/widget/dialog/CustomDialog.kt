@@ -36,8 +36,11 @@ open class CustomDialog(context: Context) : Dialog(context) {
             return this
         }
 
-        open fun setConfirmButton(onClick: View.OnClickListener): Builder {
-            dialog.confirmBtn.setOnClickListener(onClick)
+        open fun setConfirmButton(onClick: View.OnClickListener? = null): Builder {
+            if(onClick == null)
+                dialog.confirmBtn.setOnClickListener { dialog.dismiss() }
+            else
+                dialog.confirmBtn.setOnClickListener(onClick)
             dialog.confirmBtn.visibility = View.VISIBLE
             return this
         }

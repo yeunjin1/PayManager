@@ -39,13 +39,7 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <View
-        android:id="@+id/line3"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerInParent="true"
-        android:background="@android:color/transparent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
 
     <ImageView
         android:id="@+id/leftButton"
@@ -79,10 +73,9 @@
 
     <View
         android:id="@+id/line1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerInParent="true"
-        android:background="@android:color/darker_gray"
+        style="@style/lineView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dateText" />
 
     <TextView
@@ -112,10 +105,9 @@
 
     <View
         android:id="@+id/line2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerInParent="true"
-        android:background="@android:color/darker_gray"
+        style="@style/lineView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline" />
 
     <androidx.constraintlayout.widget.Guideline

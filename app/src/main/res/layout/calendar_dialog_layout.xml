@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    app:cardCornerRadius="12dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pickOptions"
+            android:layout_width="match_parent"
+            android:layout_height="150dp">
+
+            <TextView
+                android:id="@+id/monthButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:text="한달"
+                app:layout_constraintBottom_toTopOf="@+id/weekButton"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="91dp" />
+
+            <TextView
+                android:id="@+id/weekButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:text="일주일"
+                app:layout_constraintBottom_toTopOf="@+id/pickButton"
+                app:layout_constraintTop_toBottomOf="@+id/monthButton"
+                tools:layout_editor_absoluteX="100dp" />
+
+            <TextView
+                android:id="@+id/pickButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:text="선택"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/weekButton"
+                tools:layout_editor_absoluteX="106dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pickCalendar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="8dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/leftButton"
+                android:layout_width="28dp"
+                android:layout_height="0dp"
+                android:background="@color/colorPrimary"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/calendarMonthText"
+                app:layout_constraintEnd_toStartOf="@+id/calendarMonthText"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/calendarMonthText"
+                app:srcCompat="@drawable/left_arrow"
+                app:tint="@color/white" />
+
+            <ImageView
+                android:id="@+id/rightButton"
+                android:layout_width="28dp"
+                android:layout_height="0dp"
+                android:background="@color/colorPrimary"
+                android:paddingTop="8dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/calendarMonthText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/calendarMonthText"
+                app:layout_constraintTop_toTopOf="@id/calendarMonthText"
+                app:srcCompat="@drawable/right_arrow"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/calendarMonthText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="2020년 11월"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toTopOf="@+id/day1"
+                app:layout_constraintEnd_toStartOf="@+id/rightButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/leftButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/day1"
+                style="@style/MondayTextView"
+                android:text="@string/sun"
+                app:layout_constraintEnd_toStartOf="@+id/day2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/calendarMonthText" />
+
+            <TextView
+                android:id="@+id/day2"
+                style="@style/MondayTextView"
+                android:text="@string/mon"
+                app:layout_constraintBottom_toBottomOf="@id/day1"
+                app:layout_constraintEnd_toStartOf="@+id/day3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/day1"
+                app:layout_constraintTop_toTopOf="@id/day1" />
+
+            <TextView
+                android:id="@+id/day3"
+                style="@style/MondayTextView"
+                android:text="@string/tue"
+                app:layout_constraintBottom_toBottomOf="@id/day1"
+                app:layout_constraintEnd_toStartOf="@+id/day4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/day2"
+                app:layout_constraintTop_toTopOf="@id/day1" />
+
+            <TextView
+                android:id="@+id/day4"
+                style="@style/MondayTextView"
+                android:text="@string/wed"
+                app:layout_constraintBottom_toBottomOf="@id/day1"
+                app:layout_constraintEnd_toStartOf="@+id/day5"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/day3"
+                app:layout_constraintTop_toTopOf="@id/day1" />
+
+            <TextView
+                android:id="@+id/day5"
+                style="@style/MondayTextView"
+                android:text="@string/thu"
+                app:layout_constraintBottom_toBottomOf="@id/day1"
+                app:layout_constraintEnd_toStartOf="@+id/day6"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/day4"
+                app:layout_constraintTop_toTopOf="@id/day1" />
+
+            <TextView
+                android:id="@+id/day6"
+                style="@style/MondayTextView"
+                android:text="@string/fri"
+                app:layout_constraintBottom_toBottomOf="@id/day1"
+                app:layout_constraintEnd_toStartOf="@+id/day7"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/day5"
+                app:layout_constraintTop_toTopOf="@id/day1" />
+
+            <TextView
+                android:id="@+id/day7"
+                style="@style/MondayTextView"
+                android:text="@string/sat"
+                app:layout_constraintBottom_toBottomOf="@id/day1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/day6"
+                app:layout_constraintTop_toTopOf="@id/day1" />
+
+            <View
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:background="@color/lightGray"
+                app:layout_constraintBottom_toTopOf="@+id/calendarView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/day1" />
+
+            <com.kizitonwose.calendarview.CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cv_dayViewResource="@layout/calendar_day_picker_layout"
+                app:cv_orientation="horizontal"
+                app:cv_scrollMode="paged"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/day1" />
+
+            <TextView
+                android:id="@+id/cancelBtn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/dialog_button_background"
+                android:gravity="center"
+                android:text="취소"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/confirmBtn"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/calendarView"
+                app:layout_constraintVertical_bias="0.7" />
+
+            <TextView
+                android:id="@+id/confirmBtn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:background="@drawable/dialog_button_background"
+                android:gravity="center"
+                android:text="확인"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="@+id/cancelBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cancelBtn"
+                app:layout_constraintTop_toTopOf="@+id/cancelBtn"
+                app:layout_constraintVertical_bias="0.7" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+
+
+</androidx.cardview.widget.CardView>

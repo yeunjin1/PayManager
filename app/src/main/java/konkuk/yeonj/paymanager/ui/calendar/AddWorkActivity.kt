@@ -10,6 +10,7 @@ import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.convertToTimeString
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
+import konkuk.yeonj.paymanager.widget.dialog.CustomDialog
 import kotlinx.android.synthetic.main.activity_add_work.*
 import kotlinx.android.synthetic.main.activity_add_work.confirm_button
 import kotlinx.android.synthetic.main.activity_add_work.toolbar
@@ -46,14 +47,15 @@ class AddWorkActivity : AppCompatActivity() {
         realm = Realm.getDefaultInstance()
         //추가
         val placeId = intent.getStringExtra("placeId")
-        if(placeId != null)
+        if(placeId != null){
+            selectedDay.time = intent.getLongExtra("selectedDay", 0L)
             place = realm.where(Place::class.java).equalTo("id", placeId).findFirst()
+        }
         //수정
         val workId = intent.getStringExtra("workId")
         if(workId != null)
             work = realm.where(Work::class.java).equalTo("id", workId).findFirst()
 
-        selectedDay.time = intent.getLongExtra("selectedDay", 0L)
 
         initLayout()
         initListener()
@@ -89,39 +91,55 @@ class AddWorkActivity : AppCompatActivity() {
 
     fun initListener(){
         confirm_button.setOnClickListener{
-            if(place != null){
-                //추가
-                realm.beginTransaction()
-                val item = realm.createObject(Work::class.java, UUID.randomUUID().toString())
-                item.date = selectedDay
-                item.placeId = place!!.id
-                item.place = place!!
-                item.timePush = System.currentTimeMillis()
-                item.timeStart = startHour * 60 + startMin
-                item.timeEnd = endHour * 60 + endMin
-                item.timeDuring = item.timeEnd - item.timeStart
-                item.breakTime = breakEdit.text.toString().toInt()
-                item.nightTime = nightEdit.text.toString().toInt()
-                item.overTime = overEdit.text.toString().toInt()
-                realm.commitTransaction()
-                Log.d("mytag", item.toString())
-                finish()
+            val startTime = startHour * 60 + startMin
+            val endTime = endHour * 60 + endMin
+            var duringTime = 0
+            if(endTime - startTime > 0){
+                duringTime = endTime - startTime
+            }
+            else if(endTime - startTime < 0){
+                duringTime = (24 * 60 - startTime) + endTime
             }
 
-            if(work != null) {
-                //수정
-                realm.beginTransaction()
-                work!!.timePush = System.currentTimeMillis()
-                work!!.timeStart = startHour * 60 + startMin
-                work!!.timeEnd = endHour * 60 + endMin
-                work!!.timeDuring = work!!.timeEnd - work!!.timeStart
-                work!!.breakTime = breakEdit.text.toString().toInt()
-                work!!.nightTime = nightEdit.text.toString().toInt()
-                work!!.overTime = overEdit.text.toString().toInt()
-                realm.commitTransaction()
-                finish()
+            if(duringTime == 0){
+                //dialog
+                var dialog = CustomDialog.Builder(this).create()
+                dialog
+                    .setContent("시간을 등록해 주세요")
+                    .setConfirmButton{ finish() }
+                    .show()
             }
-            
+            else{
+                if(place != null){
+                    //추가
+                    realm.beginTransaction()
+                    val item = realm.createObject(Work::class.java, UUID.randomUUID().toString())
+                    item.date = selectedDay
+                    item.placeId = place!!.id
+                    item.place = place!!
+                    item.timePush = System.currentTimeMillis()
+                    item.timeStart = startTime
+                    item.timeEnd = endTime
+                    item.timeDuring = duringTime
+                    item.breakTime = breakEdit.text.toString().toInt()
+                    item.nightTime = nightEdit.text.toString().toInt()
+                    item.overTime = overEdit.text.toString().toInt()
+                    realm.commitTransaction()
+                }
+
+                if(work != null) {
+                    //수정
+                    realm.beginTransaction()
+                    work!!.timePush = System.currentTimeMillis()
+                    work!!.timeStart = startTime
+                    work!!.timeEnd = endTime
+                    work!!.timeDuring = duringTime
+                    work!!.breakTime = breakEdit.text.toString().toInt()
+                    work!!.nightTime = nightEdit.text.toString().toInt()
+                    work!!.overTime = overEdit.text.toString().toInt()
+                    realm.commitTransaction()
+                }
+            }
         }
 
         startTime.setOnClickListener{

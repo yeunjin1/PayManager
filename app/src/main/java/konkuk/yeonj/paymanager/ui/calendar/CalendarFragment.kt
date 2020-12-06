@@ -86,7 +86,7 @@ class CalendarFragment : Fragment() {
             val textView = view.findViewById<TextView>(R.id.calendarDayText)
             val rView = view.findViewById<RecyclerView>(R.id.circleListView)
             val tranView = view.findViewById<View>(R.id.tranView)
-            lateinit var day:CalendarDay
+            lateinit var day: CalendarDay
             init{
                 tranView.setOnClickListener {
                     if (day.owner == DayOwner.THIS_MONTH && selectedDay.value!! != day.date){
@@ -124,7 +124,6 @@ class CalendarFragment : Fragment() {
                     container.textView.setTextColor(Color.LTGRAY)
                 }
             }
-
             override fun create(view: View) = DayViewContainer(view)
         }
 

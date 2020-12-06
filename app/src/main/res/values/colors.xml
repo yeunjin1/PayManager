@@ -10,6 +10,7 @@
     <color name="green">@android:color/holo_green_light</color>
     <color name="blue">@android:color/holo_blue_light</color>
     <color name="purple">#EBB2F0</color>
+    <color name="white">@android:color/white</color>
 
     <color name="lightGray">#FFCCCCCC</color>
     <color name="darkGray">#FF444444</color>
