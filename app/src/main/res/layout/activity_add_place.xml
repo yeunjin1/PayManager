@@ -8,20 +8,19 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        app:title="근무지 생성"
+        app:titleTextColor="@color/white"
+        android:background="@color/colorPrimary"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
         <TextView
-            android:id="@+id/confirm_button"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:gravity="center_vertical|end"
-            android:paddingEnd="8dp"
-            android:text="@string/addPlace_confirm" />
+            style="@style/TopConfirmText"
+            android:id="@+id/confirm_button"/>
     </androidx.appcompat.widget.Toolbar>
 
     <TextView

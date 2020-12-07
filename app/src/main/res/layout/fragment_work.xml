@@ -26,10 +26,7 @@
                 style="@style/PlaceButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:backgroundTint="@color/colorDark"
-                android:gravity="center"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:text="전체"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -51,7 +48,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/dateText"
         app:srcCompat="@drawable/left_arrow"
-        app:tint="@android:color/darker_gray" />
+        app:tint="@color/colorPrimaryDark" />
 
     <TextView
         android:id="@+id/dateText"
@@ -59,8 +56,8 @@
         android:layout_height="50dp"
         android:gravity="center"
         android:text="2020-11-15 ~ 2020-11-21"
-        android:textColor="@color/colorDark"
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/leftButton"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
@@ -74,7 +71,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/dateText"
         app:srcCompat="@drawable/right_arrow"
-        app:tint="@android:color/darker_gray" />
+        app:tint="@color/colorPrimaryDark" />
 
 <!--    <View-->
 <!--        android:id="@+id/line1"-->
@@ -100,7 +97,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="24시간 30분"
-            android:textColor="@color/colorPrimaryDark"
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/totalMoneyText"
             app:layout_constraintEnd_toEndOf="parent"
@@ -156,9 +152,6 @@
         android:gravity="center"
         android:text="관리 탭에서 근무지를 추가하세요"
         android:textSize="20sp"
-        android:visibility="visible" />
-
-
-
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

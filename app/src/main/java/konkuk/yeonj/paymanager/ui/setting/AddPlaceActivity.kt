@@ -10,6 +10,9 @@ import io.realm.Realm
 import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
+import konkuk.yeonj.paymanager.toColorFilter
+import konkuk.yeonj.paymanager.toColorRes
+import konkuk.yeonj.paymanager.widget.dialog.CustomDialog
 import kotlinx.android.synthetic.main.activity_add_place.*
 import java.util.*
 
@@ -36,7 +39,6 @@ class AddPlaceActivity : AppCompatActivity() {
     }
 
     fun init(){
-        toolbar.title = getString(R.string.addPlace_toolbar_title)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
@@ -46,6 +48,7 @@ class AddPlaceActivity : AppCompatActivity() {
         initSpinner()
         if(placeId != ""){
             initLayout()
+            toolbar.title = "근무지 수정"
         }
         initListener()
 
@@ -113,17 +116,13 @@ class AddPlaceActivity : AppCompatActivity() {
                 }
             }
             else{
-                val builder = AlertDialog.Builder(this@AddPlaceActivity)
-                builder.setNegativeButton("확인", null)
-                builder.setMessage("근무지 명과 시급을 모두 입력해주세요.")
-                builder.show()
+                val builder = CustomDialog.Builder(this).create()
+                builder
+                    .setContent("근무지 명과 시급을 모두 입력해주세요.")
+                    .setConfirmButton{builder.dismissDialog()}
+                    .show()
             }
         }
     }
-
-
-
-
-
 
 }

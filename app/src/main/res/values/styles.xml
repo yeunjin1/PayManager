@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:timePickerStyle">@style/MyTimePickerTheme</item>
+<!--        <item name="android:timePickerStyle">@style/MyTimePickerTheme</item>-->
         <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
         <item name="android:editTextStyle">@style/customEditTextFontStyle</item>
     </style>
@@ -13,6 +13,7 @@
 <!--    custom font 적용-->
     <style name="customTextViewFontStyle" parent="@android:style/Widget.DeviceDefault.TextView">
         <item name="android:fontFamily">@font/font_bold</item>
+        <item name="android:textColor">@color/darkGray</item>
     </style>
     <style name="customEditTextFontStyle" parent="@android:style/Widget.DeviceDefault.EditText">
         <item name="android:fontFamily">@font/font_bold</item>
@@ -57,10 +58,10 @@
         <item name="android:textColor">@android:color/darker_gray</item>
     </style>
 
-    <style name="MyTimePickerTheme" parent="android:Widget.Material.TimePicker">
-        <item name="android:timePickerMode">spinner</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
+<!--    <style name="MyTimePickerTheme" parent="android:Widget.Material.TimePicker">-->
+<!--        <item name="android:timePickerMode">spinner</item>-->
+<!--        <item name="android:textColor">@android:color/black</item>-->
+<!--    </style>-->
 
 <!--    CalendarFragment-->
 <!--    요일 텍스트-->
@@ -81,6 +82,8 @@
 <!--    동그란 색깔 버튼-->
     <style name="PlaceButton"  parent="@android:style/Widget.TextView">
         <item name="android:gravity">center</item>
+        <item name="android:paddingStart">17dp</item>
+        <item name="android:paddingEnd">17dp</item>
         <item name="android:fontFamily">@font/font_extra_bold</item>
         <item name="android:background">@drawable/place_button_background</item>
         <item name="android:textColor">@android:color/white</item>
@@ -101,6 +104,16 @@
         <item name="android:layout_height">0.5dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@color/lightGray</item>
+    </style>
+
+    <style name="TopConfirmText"  parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:text">@string/addPlace_confirm</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center_vertical|end</item>
+        <item name="android:layout_gravity">end</item>
     </style>
 
 </resources>

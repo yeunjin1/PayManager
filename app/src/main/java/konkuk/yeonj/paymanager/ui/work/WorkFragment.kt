@@ -88,7 +88,7 @@ class WorkFragment : Fragment() {
                 override fun onItemClick(position: Int) {
                     if (position == 0){ //전체 선택
                         selectedPlace = null
-                        placeFilterButton.background.colorFilter = requireContext().getColor(R.color.darkGray).toColorFilter()
+                        placeFilterButton.background.colorFilter = requireContext().getColor(R.color.colorPrimaryDark).toColorFilter()
                     }
                     else{
                         selectedPlace = mainActivity.placeResults[position - 1]!!
