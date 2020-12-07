@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import io.realm.Realm
-import konkuk.yeonj.paymanager.R
-import konkuk.yeonj.paymanager.convertToTimeString
+import konkuk.yeonj.paymanager.*
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
 import konkuk.yeonj.paymanager.widget.dialog.CustomDialog
@@ -69,6 +68,8 @@ class AddWorkActivity : AppCompatActivity() {
             //추가
             toolbar.title = place!!.name
             dateText.text = dateFormat.format(selectedDay)
+            startTime.background.colorFilter = place!!.color.toColorRes(this).toColorFilter()
+            endTime.background.colorFilter = place!!.color.toColorRes(this).toColorFilter()
         }
 
         if(work != null) {
@@ -78,8 +79,11 @@ class AddWorkActivity : AppCompatActivity() {
             endTime.text = work!!.timeEnd.convertToTimeString()
             dateText.text = dateFormat.format(work!!.date)
             breakEdit.setText(work!!.breakTime.toString())
-            nightEdit.setText(work!!.nightTime.toString())
+            val nightTime = getNightTime(work!!.timeStart, work!!.timeEnd)
+            nightEdit.setText(nightTime.toString())
             overEdit.setText(work!!.overTime.toString())
+            startTime.background.colorFilter = work!!.place!!.color.toColorRes(this).toColorFilter()
+            endTime.background.colorFilter = work!!.place!!.color.toColorRes(this).toColorFilter()
 
             startHour = work!!.timeStart / 60
             startMin = work!!.timeStart % 60
@@ -92,14 +96,10 @@ class AddWorkActivity : AppCompatActivity() {
     fun initListener(){
         confirm_button.setOnClickListener{
             val startTime = startHour * 60 + startMin
-            val endTime = endHour * 60 + endMin
-            var duringTime = 0
-            if(endTime - startTime > 0){
-                duringTime = endTime - startTime
-            }
-            else if(endTime - startTime < 0){
-                duringTime = (24 * 60 - startTime) + endTime
-            }
+            var endTime = endHour * 60 + endMin
+            if(endTime - startTime < 0)
+                endTime += 24 * 60
+            var duringTime = endTime - startTime
 
             if(duringTime == 0){
                 //dialog
@@ -120,25 +120,26 @@ class AddWorkActivity : AppCompatActivity() {
                     item.timePush = System.currentTimeMillis()
                     item.timeStart = startTime
                     item.timeEnd = endTime
-                    item.timeDuring = duringTime
                     item.breakTime = breakEdit.text.toString().toInt()
-                    item.nightTime = nightEdit.text.toString().toInt()
+//                    item.nightTime = nightEdit.text.toString().toInt()
                     item.overTime = overEdit.text.toString().toInt()
+//                    item.timeDuring = duringTime - item.breakTime
                     realm.commitTransaction()
                 }
 
                 if(work != null) {
                     //수정
                     realm.beginTransaction()
-                    work!!.timePush = System.currentTimeMillis()
+//                    work!!.timePush = System.currentTimeMillis()
                     work!!.timeStart = startTime
                     work!!.timeEnd = endTime
-                    work!!.timeDuring = duringTime
                     work!!.breakTime = breakEdit.text.toString().toInt()
-                    work!!.nightTime = nightEdit.text.toString().toInt()
+//                    work!!.nightTime = nightEdit.text.toString().toInt()
                     work!!.overTime = overEdit.text.toString().toInt()
+//                    work!!.timeDuring = duringTime - work!!.breakTime
                     realm.commitTransaction()
                 }
+                finish()
             }
         }
 

@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         style="@style/ToolbarTitleText"
         android:id="@+id/calendarMonthText"
         android:text="2020년 11월"

@@ -16,6 +16,7 @@ import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
 import konkuk.yeonj.paymanager.toColorFilter
+import konkuk.yeonj.paymanager.toColorRes
 import konkuk.yeonj.paymanager.widget.dialog.CustomDialog
 
 class SettingListAdapter (realmResult: OrderedRealmCollection<Place>, val context: Context) : RealmRecyclerViewAdapter<Place, SettingListAdapter.ViewHolder>(realmResult, true) {
@@ -64,15 +65,7 @@ class SettingListAdapter (realmResult: OrderedRealmCollection<Place>, val contex
         if (holder is ViewHolder) {
             val item = getItem(position)!!
             holder.placeText.text = item.name
-            var color = 0
-            when(item.color){
-                0-> color = R.color.red
-                1-> color = R.color.orange
-                2-> color = R.color.green
-                3-> color = R.color.blue
-                4-> color = R.color.purple
-            }
-            holder.placeText.background.colorFilter = context.getColor(color).toColorFilter()
+            holder.placeText.background.colorFilter = item.color.toColorRes(context).toColorFilter()
         }
     }
 }

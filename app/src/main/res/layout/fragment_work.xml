@@ -8,7 +8,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -21,16 +21,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Spinner
-                android:id="@+id/placeName"
+            <TextView
+                android:id="@+id/placeFilterButton"
+                style="@style/PlaceButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@drawable/place_button_background"
+                android:backgroundTint="@color/colorDark"
                 android:gravity="center"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
-                android:spinnerMode="dialog"
-                android:textSize="20sp"
+                android:text="전체"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -40,11 +41,12 @@
     </androidx.appcompat.widget.Toolbar>
 
 
-
     <ImageView
         android:id="@+id/leftButton"
-        android:layout_width="30dp"
+        android:layout_width="45dp"
         android:layout_height="0dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="@id/dateText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/dateText"
@@ -57,65 +59,85 @@
         android:layout_height="50dp"
         android:gravity="center"
         android:text="2020-11-15 ~ 2020-11-21"
+        android:textColor="@color/colorDark"
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
         app:layout_constraintStart_toEndOf="@+id/leftButton"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <ImageView
         android:id="@+id/rightButton"
-        android:layout_width="30dp"
+        android:layout_width="45dp"
         android:layout_height="0dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="@id/dateText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/dateText"
         app:srcCompat="@drawable/right_arrow"
         app:tint="@android:color/darker_gray" />
 
-    <View
-        android:id="@+id/line1"
-        style="@style/lineView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dateText" />
+<!--    <View-->
+<!--        android:id="@+id/line1"-->
+<!--        style="@style/lineView"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/dateText" />-->
 
-    <TextView
-        android:id="@+id/totalTimeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/totalView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="8dp"
-        android:text="총 3시간 근무"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/totalMoneyText"
+        android:background="@drawable/total_view_background"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line1"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toBottomOf="@+id/dateText">
 
-    <TextView
-        android:id="@+id/totalMoneyText"
-        android:layout_width="wrap_content"
-        android:layout_height="25dp"
-        android:layout_marginTop="8dp"
-        android:text="27000원"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/line2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/totalTimeText" />
+        <TextView
+            android:id="@+id/totalTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="24시간 30분"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/totalMoneyText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-    <View
-        android:id="@+id/line2"
-        style="@style/lineView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline" />
+        <TextView
+            android:id="@+id/totalMoneyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="28,000원"
+            android:textColor="@color/colorDark"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/totalTimeText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+<!--    <View-->
+<!--        android:id="@+id/line2"-->
+<!--        style="@style/lineView"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/guideline" />-->
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.4" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/workListView"
@@ -123,8 +145,8 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/line2" />
+        app:layout_constraintTop_toBottomOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/defaultText"
@@ -132,9 +154,11 @@
         android:layout_height="match_parent"
         android:background="@android:color/background_light"
         android:gravity="center"
-        android:text="근무탭에서 근무지를 추가하세요"
-        android:textSize="25sp"
-        android:visibility="gone" />
+        android:text="관리 탭에서 근무지를 추가하세요"
+        android:textSize="20sp"
+        android:visibility="visible" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

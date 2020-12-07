@@ -7,18 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.toColor
 import androidx.recyclerview.widget.RecyclerView
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
 import io.realm.RealmResults
-import konkuk.yeonj.paymanager.R
-import konkuk.yeonj.paymanager.convertToTimeString
+import konkuk.yeonj.paymanager.*
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
 import java.text.SimpleDateFormat
 
 class WorkListAdapter (realmResult: OrderedRealmCollection<Work>, val context: Context, val placeResults: RealmResults<Place>) : RealmRecyclerViewAdapter<Work, WorkListAdapter.ViewHolder>(realmResult, true) {
-    val dateFormat = SimpleDateFormat("MM월 dd일 EEE")
+    val dateFormat = SimpleDateFormat("MM/dd (E)")
 
     interface OnItemClickListener{
         fun OnItemClick(holder: WorkListAdapter.ViewHolder, view:View, workId: String)
@@ -32,12 +32,14 @@ class WorkListAdapter (realmResult: OrderedRealmCollection<Work>, val context: C
         var timeText:TextView
         var duringTimeText:TextView
         var moneyText:TextView
+        var circleIcon: ImageView
 
         init {
             duringTimeText = itemView.findViewById(R.id.duringTimeText)
             timeText = itemView.findViewById(R.id.timeText)
             moneyText = itemView.findViewById(R.id.moneyText)
             dateText = itemView.findViewById(R.id.dateText)
+            circleIcon = itemView.findViewById(R.id.circleIcon)
 
             itemView.setOnClickListener {
                 itemClickListener?.OnItemClick(this, it, getItem(bindingAdapterPosition)!!.id)
@@ -54,22 +56,11 @@ class WorkListAdapter (realmResult: OrderedRealmCollection<Work>, val context: C
         if (holder is WorkListAdapter.ViewHolder) {
             val item = getItem(position)!!
             holder.dateText.text = dateFormat.format(item.date)
-            holder.duringTimeText.text = String.format("%.1f", item.timeDuring / 60.0) + "시간"
-            holder.moneyText.text = (item.place!!.payByHour * (item.timeDuring / 60.0)).toInt().toString() + "원"
-            holder.timeText.text = item.timeStart.convertToTimeString() + " ~ " + item.timeEnd.convertToTimeString()
-//            var color = 0
-//            when(placeItem.color){
-//                0-> color = R.color.red
-//                1-> color = R.color.orange
-//                2-> color = R.color.green
-//                3-> color = R.color.blue
-//                4-> color = R.color.purple
-//            }
-//            holder.circleIcon.setColorFilter(context.getColor(color))
+            val timeDuring = item.timeEnd - item.timeStart - item.breakTime
+            holder.duringTimeText.text = timeDuring.minToString()
+            holder.moneyText.text = calTotalPay(item.timeStart, item.timeEnd, item.overTime, item.breakTime, item.place!!.payByHour).moneyToString()
+            holder.timeText.text = timePeriodToString(item.timeStart, item.timeEnd)
+            holder.circleIcon.colorFilter = item.place!!.color.toColorRes(context).toColorFilter()
         }
-    }
-
-    override fun getData(): OrderedRealmCollection<Work>? {
-        return super.getData()
     }
 }

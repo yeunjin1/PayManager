@@ -41,9 +41,9 @@
 
     <TextView
         android:id="@+id/duringText"
+        style="@style/SmallItemListText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/SmallItemListText"
         android:text="7시간"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/timeText"

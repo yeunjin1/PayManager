@@ -1,10 +1,6 @@
 package konkuk.yeonj.paymanager.ui.calendar
 
 import android.content.Context
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +11,8 @@ import io.realm.RealmRecyclerViewAdapter
 import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.toColorFilter
+import konkuk.yeonj.paymanager.toColorRes
+import kotlinx.android.synthetic.main.activity_add_work.*
 
 class CalPlaceListAdapter(realmResult: OrderedRealmCollection<Place>, val context: Context) : RealmRecyclerViewAdapter<Place, CalPlaceListAdapter.ViewHolder>(realmResult, true) {
     interface OnItemClickListener{
@@ -41,15 +39,7 @@ class CalPlaceListAdapter(realmResult: OrderedRealmCollection<Place>, val contex
         if (holder is ViewHolder) {
             val item = getItem(position)!!
             holder.placeText.text = item.name
-            var color = 0
-            when(item.color){
-                0-> color = R.color.red
-                1-> color = R.color.orange
-                2-> color = R.color.green
-                3-> color = R.color.blue
-                4-> color = R.color.purple
-            }
-            holder.placeText.background.colorFilter = context.getColor(color).toColorFilter()
+            holder.placeText.background.colorFilter = item.color.toColorRes(context).toColorFilter()
         }
     }
 }

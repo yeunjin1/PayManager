@@ -16,6 +16,8 @@ import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.convertToTimeString
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
+import konkuk.yeonj.paymanager.toColorFilter
+import konkuk.yeonj.paymanager.toColorRes
 import kotlinx.android.synthetic.main.row_cal_list.view.*
 import java.time.format.DateTimeFormatter
 
@@ -42,16 +44,7 @@ class CircleGridAdapter (val data: ArrayList<Work>, val context: Context) : Recy
     override fun onBindViewHolder(holder: CircleGridAdapter.ViewHolder, position: Int) {
         if (holder is ViewHolder) {
             val item = data[position]
-            val placeColor = item.place?.color
-            var color = 0
-            when(placeColor){
-                0-> color = R.color.red
-                1-> color = R.color.orange
-                2-> color = R.color.green
-                3-> color = R.color.blue
-                4-> color = R.color.purple
-            }
-            holder.circleIcon.setColorFilter(context.getColor(color))
+            holder.circleIcon.colorFilter = item.place?.color!!.toColorRes(context).toColorFilter()
         }
     }
 

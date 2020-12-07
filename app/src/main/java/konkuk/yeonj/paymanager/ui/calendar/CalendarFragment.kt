@@ -26,6 +26,7 @@ import konkuk.yeonj.paymanager.MainActivity
 import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.convertToDate
 import konkuk.yeonj.paymanager.data.Work
+import konkuk.yeonj.paymanager.setTextColorRes
 import kotlinx.android.synthetic.main.calendar_day_layout.*
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import java.time.LocalDate
@@ -110,7 +111,7 @@ class CalendarFragment : Fragment() {
                     mainActivity.applicationContext
                 )
                 if(day.owner == DayOwner.THIS_MONTH){
-                    container.textView.setTextColor(Color.BLACK)
+                    container.textView.setTextColorRes(R.color.black)
                     when{
                         selectedDay.value!! == day.date -> {
                             container.view.background = ContextCompat.getDrawable(context!!, R.color.colorPrimaryLight)

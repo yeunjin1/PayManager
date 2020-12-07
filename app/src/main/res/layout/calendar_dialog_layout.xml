@@ -25,8 +25,7 @@
                 android:gravity="center"
                 android:text="한달"
                 app:layout_constraintBottom_toTopOf="@+id/weekButton"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="91dp" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/weekButton"
@@ -35,8 +34,7 @@
                 android:gravity="center"
                 android:text="일주일"
                 app:layout_constraintBottom_toTopOf="@+id/pickButton"
-                app:layout_constraintTop_toBottomOf="@+id/monthButton"
-                tools:layout_editor_absoluteX="100dp" />
+                app:layout_constraintTop_toBottomOf="@+id/monthButton"/>
 
             <TextView
                 android:id="@+id/pickButton"
@@ -45,8 +43,7 @@
                 android:gravity="center"
                 android:text="선택"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/weekButton"
-                tools:layout_editor_absoluteX="106dp" />
+                app:layout_constraintTop_toBottomOf="@+id/weekButton"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

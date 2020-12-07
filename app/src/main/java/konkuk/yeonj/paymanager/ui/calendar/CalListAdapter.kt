@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
 import io.realm.RealmResults
-import konkuk.yeonj.paymanager.R
-import konkuk.yeonj.paymanager.convertToTimeString
+import konkuk.yeonj.paymanager.*
 import konkuk.yeonj.paymanager.data.Place
 import konkuk.yeonj.paymanager.data.Work
 import java.time.format.DateTimeFormatter
@@ -40,7 +39,6 @@ class CalListAdapter (val data: ArrayList<Work>, val context: Context) : Recycle
 
             itemView.setOnClickListener {
                 itemClickListener?.OnItemClick(this, it, data[bindingAdapterPosition]!!.id)
-                Log.d("mytag", "click")
             }
         }
     }
@@ -58,18 +56,12 @@ class CalListAdapter (val data: ArrayList<Work>, val context: Context) : Recycle
         if (holder is ViewHolder) {
             val item = data[position]!!
             holder.placeText.text = item.place?.name
-            holder.timeText.text = item.timeStart.convertToTimeString() + " ~ " + item.timeEnd.convertToTimeString()
-            holder.duringText.text = String.format("%.1f", item.timeDuring / 60.0) + "시간"
-            holder.moneyText.text = (item.place!!.payByHour * (item.timeDuring / 60.0)).toInt().toString() + "원"
-            var color = 0
-            when(item.place!!.color){
-                0-> color = R.color.red
-                1-> color = R.color.orange
-                2-> color = R.color.green
-                3-> color = R.color.blue
-                4-> color = R.color.purple
-            }
-            holder.circleIcon.setColorFilter(context.getColor(color))
+            holder.timeText.text = timePeriodToString(item.timeStart, item.timeEnd)
+            val timeDuring = item.timeEnd - item.timeStart - item.breakTime
+
+            holder.duringText.text = timeDuring.minToString()
+            holder.moneyText.text = calTotalPay(item.timeStart, item.timeEnd, item.overTime, item.breakTime, item.place!!.payByHour).moneyToString()
+            holder.circleIcon.colorFilter = item.place!!.color.toColorRes(context).toColorFilter()
         }
     }
 
