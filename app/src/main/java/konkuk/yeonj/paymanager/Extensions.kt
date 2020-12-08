@@ -3,17 +3,22 @@ package konkuk.yeonj.paymanager
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.provider.Settings.Global.getString
 import android.util.Log
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import io.realm.RealmList
+import konkuk.yeonj.paymanager.data.TimeSet
 import kotlinx.android.synthetic.main.activity_add_work.*
+import java.sql.Time
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.ArrayList
 
 fun Int.convertToTimeString(): String {
     var hour = this / 60
@@ -28,7 +33,7 @@ fun LocalDate.convertToDate(): Date {
 }
 
 fun Int.toColorFilter(): PorterDuffColorFilter{
-    return PorterDuffColorFilter(this, PorterDuff.Mode.MULTIPLY)
+    return PorterDuffColorFilter(this, PorterDuff.Mode.SRC_IN)
 }
 
 fun LocalDate.toLastDayOfMonth(): LocalDate{
@@ -89,9 +94,9 @@ fun calTotalPay(startTime: Int, endTime: Int, overTime: Int, breakTime: Int, pay
     val duringTime = (endTime - startTime - breakTime) / 60.0
     val nightTime = getNightTime(startTime, endTime) / 60.0
     val overTime = overTime / 60.0
-    Log.d("mytag", duringTime.toString())
-    Log.d("mytag", nightTime.toString())
-    Log.d("mytag", overTime.toString())
+//    Log.d("mytag", duringTime.toString())
+//    Log.d("mytag", nightTime.toString())
+//    Log.d("mytag", overTime.toString())
     return (payByHour * duringTime + (payByHour / 2) * nightTime + (payByHour / 2) * overTime).toInt()
 }
 
@@ -115,6 +120,34 @@ fun getNightTime(startTime: Int, endTime: Int): Int{
     else if(night < 0) night = 0
     return night
 }
+
+fun Int.toDayString(): String{
+    when(this){
+        0 -> return "월"
+        1 -> return "화"
+        2 -> return "수"
+        3 -> return "목"
+        4 -> return "금"
+        5 -> return "토"
+        6 -> return "일"
+        else -> return ""
+    }
+}
+
+fun ArrayList<TimeSet>.toRealmList(): RealmList<TimeSet>{
+    val realmList = RealmList<TimeSet>()
+    realmList.addAll(this)
+    return realmList
+}
+
+fun Date.convertToDay(): Int {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    val day = cal.get(Calendar.DAY_OF_WEEK)
+    if(day >= 2) return day - 2
+    else return 6
+}
+
 
 internal fun TextView.setTextColorRes(@ColorRes color: Int) = setTextColor(context.getColorCompat(color))
 internal fun Context.getDrawableCompat(@DrawableRes drawable: Int) = ContextCompat.getDrawable(this, drawable)

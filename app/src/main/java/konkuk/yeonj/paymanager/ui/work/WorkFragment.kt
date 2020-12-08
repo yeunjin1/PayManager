@@ -2,10 +2,10 @@ package konkuk.yeonj.paymanager.ui.work
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import io.realm.RealmResults
@@ -18,6 +18,7 @@ import konkuk.yeonj.paymanager.widget.dialog.ListDialog
 import kotlinx.android.synthetic.main.fragment_work.*
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 class WorkFragment : Fragment() {
     lateinit var v:View
@@ -33,9 +34,9 @@ class WorkFragment : Fragment() {
     private val now = LocalDate.now()
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         v = inflater.inflate(R.layout.fragment_work, container, false)
         mainActivity = activity as MainActivity
@@ -92,7 +93,9 @@ class WorkFragment : Fragment() {
                     }
                     else{
                         selectedPlace = mainActivity.placeResults[position - 1]!!
-                        placeFilterButton.background.colorFilter = selectedPlace!!.color!!.toColorRes(requireContext()).toColorFilter()
+                        placeFilterButton.background.colorFilter = selectedPlace!!.color!!.toColorRes(
+                            requireContext()
+                        ).toColorFilter()
                     }
                     placeFilterButton.text = list[position]
                     updateView()
@@ -135,7 +138,7 @@ class WorkFragment : Fragment() {
             dialog.setButtons(
                 {// 선택
                     isMonthType = false
-                    if(dialog.getStartDate() != null && dialog.getEndDate() != null){
+                    if (dialog.getStartDate() != null && dialog.getEndDate() != null) {
                         startDay = dialog.getStartDate()!!
                         endDay = dialog.getEndDate()!!
                         updateView()
@@ -166,23 +169,64 @@ class WorkFragment : Fragment() {
         if (selectedPlace == null){
             weekResults = mainActivity.workResults.where()
                 .greaterThanOrEqualTo("date", startDay.convertToDate())
-                .lessThanOrEqualTo("date", endDay.convertToDate()).findAll()
+                .lessThanOrEqualTo("date", endDay.convertToDate()).findAll().sort("date")
         }
         else{
             weekResults = mainActivity.workResults.where()
                 .equalTo("placeId", selectedPlace!!.id)
                 .greaterThanOrEqualTo("date", startDay.convertToDate())
-                .lessThanOrEqualTo("date", endDay.convertToDate()).findAll()
+                .lessThanOrEqualTo("date", endDay.convertToDate()).findAll().sort("date")
         }
 
-        rViewAdapter = WorkListAdapter(weekResults, mainActivity.applicationContext, mainActivity.placeResults)
+        rViewAdapter = WorkListAdapter(
+            weekResults,
+            mainActivity.applicationContext,
+            mainActivity.placeResults
+        )
         workListView.adapter = rViewAdapter
         totalMoney = 0
         totalTime = 0
-        for (result in weekResults){
-            totalMoney += calTotalPay(result.timeStart, result.timeEnd, result.overTime, result.breakTime, result.place!!.payByHour)
-            totalTime += result.timeEnd - result.timeStart - result.breakTime
+
+
+        if(selectedPlace != null && selectedPlace!!.vacPay){ //주휴 수당 적용
+            var isNext = false
+            var timeInWeek = 0
+            val cal = Calendar.getInstance()
+            for (result in weekResults) {
+                totalMoney += calTotalPay(
+                    result.timeStart,
+                    result.timeEnd,
+                    result.overTime,
+                    result.breakTime,
+                    result.place!!.payByHour
+                )
+                totalTime += result.timeEnd - result.timeStart - result.breakTime
+                cal.time = result.date
+                if(cal.get(Calendar.DAY_OF_WEEK) == 1 && !isNext){
+                    //일요일
+                    totalTime += timeInWeek / 5
+                    timeInWeek = result.timeEnd - result.timeStart - result.breakTime
+                }
+                else{
+                    timeInWeek += result.timeEnd - result.timeStart - result.breakTime
+                }
+                Log.d("mytag", timeInWeek.toString())
+            }
         }
+        else{
+            for (result in weekResults) {
+                totalMoney += calTotalPay(
+                    result.timeStart,
+                    result.timeEnd,
+                    result.overTime,
+                    result.breakTime,
+                    result.place!!.payByHour
+                )
+                totalTime += result.timeEnd - result.timeStart - result.breakTime
+            }
+        }
+
+
         totalMoneyText.text = totalMoney.moneyToString()
         totalTimeText.text = "총 " + totalTime.minToString() + " 근무"
     }

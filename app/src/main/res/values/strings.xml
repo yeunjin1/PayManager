@@ -13,4 +13,5 @@
     <string name="setting_title">근무지</string>
     <string name="addPlace_confirm">확인</string>
     <string name="addPlace_toolbar_title">근무지 생성</string>
+    <string name="smallest_pay">8590</string>
 </resources>

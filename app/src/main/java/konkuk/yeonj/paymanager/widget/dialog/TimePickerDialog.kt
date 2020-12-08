@@ -15,19 +15,19 @@ class TimePickerDialog (context: Context) : Dialog(context) {
             dialog.create()
             dialog.setContentView(R.layout.time_picker_dialog_layout)
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog.timePicker.hour = hour
-            dialog.timePicker.minute = min
-            dialog.timePicker.setIs24HourView(true)
+            dialog.timePicker1.hour = hour
+            dialog.timePicker1.minute = min
+            dialog.timePicker1.setIs24HourView(true)
             dialog.cancelBtn.setOnClickListener { dismissDialog() }
             return this
         }
 
         fun getPickerHour(): Int{
-            return dialog.timePicker.hour
+            return dialog.timePicker1.hour
         }
 
         fun getPickerMinute(): Int{
-            return dialog.timePicker.minute
+            return dialog.timePicker1.minute
         }
         open fun setConfirmButton(onClick: View.OnClickListener): Builder {
             dialog.confirmBtn.setOnClickListener(onClick)

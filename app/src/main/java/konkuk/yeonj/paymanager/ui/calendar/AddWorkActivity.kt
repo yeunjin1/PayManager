@@ -20,7 +20,6 @@ class AddWorkActivity : AppCompatActivity() {
     var place: Place? = null
     var work: Work? = null
     var selectedDay = Date()
-    val timeFormat = SimpleDateFormat("HH:mm")
     val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일")
     private var startHour = 12
     private var startMin = 0
@@ -70,6 +69,15 @@ class AddWorkActivity : AppCompatActivity() {
             placeName.background.colorFilter = place!!.color.toColorRes(this).toColorFilter()
             startTime.background.colorFilter = place!!.color.toColorRes(this).toColorFilter()
             endTime.background.colorFilter = place!!.color.toColorRes(this).toColorFilter()
+            var timeSet = place!!.timeSetList.where().equalTo("day", selectedDay.convertToDay()).findFirst()
+            if(timeSet != null){
+                startHour = timeSet!!.startHour
+                endHour = timeSet!!.endHour
+                startMin = timeSet!!.startMin
+                endMin = timeSet!!.endMin
+            }
+            startTime.text = (startHour * 60 + startMin).convertToTimeString()
+            endTime.text = (endHour * 60 + endMin).convertToTimeString()
         }
 
         if(work != null) {

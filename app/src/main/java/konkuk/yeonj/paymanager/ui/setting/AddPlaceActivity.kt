@@ -1,28 +1,36 @@
 package konkuk.yeonj.paymanager.ui.setting
 
-import android.app.AlertDialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
+import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
 import io.realm.Realm
+import io.realm.RealmList
 import konkuk.yeonj.paymanager.R
 import konkuk.yeonj.paymanager.data.Place
+import konkuk.yeonj.paymanager.data.TimeSet
 import konkuk.yeonj.paymanager.data.Work
-import konkuk.yeonj.paymanager.toColorFilter
-import konkuk.yeonj.paymanager.toColorRes
+import konkuk.yeonj.paymanager.toDayString
+import konkuk.yeonj.paymanager.toRealmList
+import konkuk.yeonj.paymanager.ui.calendar.AddWorkActivity
+import konkuk.yeonj.paymanager.ui.calendar.CalListAdapter
 import konkuk.yeonj.paymanager.widget.dialog.CustomDialog
+import konkuk.yeonj.paymanager.widget.dialog.DayTimePickerDialog
 import kotlinx.android.synthetic.main.activity_add_place.*
+import kotlinx.android.synthetic.main.fragment_calendar.*
 import java.util.*
 
 class AddPlaceActivity : AppCompatActivity() {
     lateinit var realm: Realm
-    //추가일 경우 0, 수정이 경우 1
-    private var placeId = ""
-    lateinit var colorSpinnerAdapter: ArrayAdapter<String>
-    lateinit var startDaySpinnerAdapter: ArrayAdapter<Int>
-    private val colors = arrayOf("red", "orange", "yellow", "green", "blue")
+    var place: Place? = null
+    lateinit var colorListAdapter: ColorListAdapter
+    lateinit var detailListAdapter: DetailListAdapter
+    var timeSetList = MutableLiveData<ArrayList<TimeSet>>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,81 +52,146 @@ class AddPlaceActivity : AppCompatActivity() {
 
         realm = Realm.getDefaultInstance()
 
-        placeId = intent.getStringExtra("id")
-        initSpinner()
-        if(placeId != ""){
+        val placeId = intent.getStringExtra("placeId")
+        initColorList()
+        initObserver()
+        timeSetList.value = ArrayList()
+        if (placeId != null){
+            place = realm.where(Place::class.java).equalTo("id", placeId).findFirst()!!
+            timeSetList.value!!.addAll(place!!.timeSetList)
             initLayout()
             toolbar.title = "근무지 수정"
         }
+        initDetailListView()
         initListener()
 
     }
 
-    fun initLayout(){
-        val item = realm.where(Place::class.java).equalTo("id", placeId).findAll()[0]!!
-        payEdit.setText(item.payByHour.toString())
-        nameEdit.setText(item.name)
-        startDaySpinner.setSelection(item.startDay - 1)
-        colorSpinner.setSelection(item.color)
-        vacPaySwitch.isChecked = item.vacPay
-        nightPaySwitch.isChecked = item.nightPay
-        overPaySwitch.isChecked = item.overPay
-        taxPaySwitch.isChecked = item.taxPay
+    private fun initObserver(){
+        timeSetList.observe(this, {
+            it.sortBy{ it2 -> it2.day }
+            detailListAdapter.notifyDataSetChanged()
+        })
     }
 
-    fun initSpinner(){
-        colorSpinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item)
-        startDaySpinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item)
-        for(i in 1..31){
-            startDaySpinnerAdapter.add(i)
+    private fun initDetailListView(){
+        detailListView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+            this, RecyclerView.VERTICAL, false
+        )
+        detailListAdapter = DetailListAdapter(timeSetList.value!!, this)
+        detailListView.adapter = detailListAdapter
+        detailListAdapter.itemLongClickListener = object : DetailListAdapter.OnItemLongClickListener{
+            override fun OnItemLongClick(
+                holder: DetailListAdapter.ViewHolder,
+                view: View,
+                item: TimeSet
+            ) {
+                var dialog = CustomDialog.Builder(this@AddPlaceActivity).create()
+                dialog
+                    .setCancelButton(null)
+                    .setConfirmButton{
+                        timeSetList.value!!.remove(item)
+                        timeSetList.value = timeSetList.value
+                        dialog.dismissDialog()
+                    }.show()
+            }
         }
-        for(i in 0..colors.size-1){
-            colorSpinnerAdapter.add(colors[i])
-        }
-        startDaySpinner.adapter = startDaySpinnerAdapter
-        colorSpinner.adapter = colorSpinnerAdapter
+
     }
 
-    fun initListener(){
+    private fun initColorList(){
+        colorList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+            this, RecyclerView.HORIZONTAL, false
+        )
+        colorListAdapter = ColorListAdapter(this)
+        colorList.adapter = colorListAdapter
+        colorListAdapter.itemClickListener = object : ColorListAdapter.OnItemClickListener{
+            override fun OnItemClick(
+                holder: ColorListAdapter.ViewHolder,
+                view: View,
+                position: Int
+            ) {
+                colorListAdapter.setSelection(position)
+            }
+        }
+
+    }
+
+    private fun initLayout(){
+        payEdit.setText(place!!.payByHour.toString())
+        nameEdit.setText(place!!.name)
+        colorListAdapter.setSelection(place!!.color)
+        vacPaySwitch.isChecked = place!!.vacPay
+        nightPaySwitch.isChecked = place!!.nightPay
+        overPaySwitch.isChecked = place!!.overPay
+        taxPaySwitch.isChecked = place!!.taxPay
+    }
+
+    private fun initListener(){
+        detailButton.setOnClickListener {
+            var dialog = DayTimePickerDialog.Builder(this, 12, 0, 12, 0, 0).create()
+            dialog
+                .setConfirmButton{
+                    realm.beginTransaction()
+                    val item = realm.createObject(TimeSet::class.java, UUID.randomUUID().toString())
+                    item.startHour = dialog.getSHour()
+                    item.startMin = dialog.getSMin()
+                    item.endHour = dialog.getEHour()
+                    item.endMin = dialog.getEMin()
+                    item.day = dialog.getDay()
+                    realm.commitTransaction()
+
+                    var iter = timeSetList.value!!.iterator()
+                    while (iter.hasNext()) {
+                        val i = iter.next()
+                        if(i.day == item.day)
+                            iter.remove()
+                    }
+                    timeSetList.value!!.add(item)
+                    timeSetList.value = timeSetList.value
+                    dialog.dismissDialog()
+                }.show()
+        }
+
         confirm_button.setOnClickListener{
-            Log.d("mytag", placeId)
-            if(payEdit.text.toString().trim() != "" && nameEdit.text.toString().trim() != ""){
-                if (placeId == ""){
+            if(nameEdit.text.toString().trim() != ""){
+                var payByHour = payEdit.hint.toString().toInt()
+                if (payEdit.text.toString().trim() != ""){
+                    payByHour = payEdit.text.toString().toInt()
+                }
+                if (place == null){
                     //추가
                     realm.beginTransaction()
                     val item = realm.createObject(Place::class.java, UUID.randomUUID().toString())
                     item.name = nameEdit.text.toString()
-                    item.payByHour = payEdit.text.toString().toInt()
-                    item.color = colorSpinner.selectedItemPosition
-                    item.startDay = startDaySpinner.selectedItem as Int
+                    item.payByHour = payByHour
+                    item.color = colorListAdapter.getSelection()
                     item.vacPay = vacPaySwitch.isChecked
                     item.nightPay = nightPaySwitch.isChecked
                     item.taxPay = taxPaySwitch.isChecked
                     item.timePush = System.currentTimeMillis()
+                    item.timeSetList = timeSetList.value!!.toRealmList()
                     realm.commitTransaction()
                     finish()
-                    Log.d("mytag", "realm push" + item.toString())
                 }
                 else{
                     //수정
-                    val item = realm.where(Place::class.java).equalTo("id", placeId).findAll()[0]!!
                     realm.beginTransaction()
-                    item.name = nameEdit.text.toString()
-                    item.payByHour = payEdit.text.toString().toInt()
-                    item.color = colorSpinner.selectedItemPosition
-                    item.startDay = startDaySpinner.selectedItem as Int
-                    item.vacPay = vacPaySwitch.isChecked
-                    item.nightPay = nightPaySwitch.isChecked
-                    item.taxPay = taxPaySwitch.isChecked
+                    place!!.name = nameEdit.text.toString()
+                    place!!.payByHour = payByHour
+                    place!!.color = colorListAdapter.getSelection()
+                    place!!.vacPay = vacPaySwitch.isChecked
+                    place!!.nightPay = nightPaySwitch.isChecked
+                    place!!.taxPay = taxPaySwitch.isChecked
+                    place!!.timeSetList = timeSetList.value!!.toRealmList()
                     realm.commitTransaction()
                     finish()
-                    Log.d("mytag", "realm update" + item.toString())
                 }
             }
             else{
                 val builder = CustomDialog.Builder(this).create()
                 builder
-                    .setContent("근무지 명과 시급을 모두 입력해주세요.")
+                    .setContent("근무지 명을 입력해주세요.")
                     .setConfirmButton{builder.dismissDialog()}
                     .show()
             }

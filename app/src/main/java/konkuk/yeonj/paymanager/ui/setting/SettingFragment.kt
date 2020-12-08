@@ -50,7 +50,7 @@ class SettingFragment : Fragment() {
                 pos: Int
             ) {
                 val intent = Intent(mainActivity, AddPlaceActivity::class.java)
-                intent.putExtra("id", mainActivity.placeResults[pos]!!.id)
+                intent.putExtra("placeId", mainActivity.placeResults[pos]!!.id)
                 startActivity(intent)
             }
         }
@@ -58,7 +58,6 @@ class SettingFragment : Fragment() {
         //근무지 추가
         addButton.setOnClickListener {
             val intent = Intent(mainActivity, AddPlaceActivity::class.java)
-            intent.putExtra("id", "")
             startActivity(intent)
         }
     }
