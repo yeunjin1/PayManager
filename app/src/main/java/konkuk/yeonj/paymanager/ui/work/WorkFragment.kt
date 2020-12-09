@@ -187,45 +187,45 @@ class WorkFragment : Fragment() {
         totalMoney = 0
         totalTime = 0
 
-
-        if(selectedPlace != null && selectedPlace!!.vacPay){ //주휴 수당 적용
-            var isNext = false
-            var timeInWeek = 0
-            val cal = Calendar.getInstance()
-            for (result in weekResults) {
-                totalMoney += calTotalPay(
-                    result.timeStart,
-                    result.timeEnd,
-                    result.overTime,
-                    result.breakTime,
-                    result.place!!.payByHour
-                )
-                totalTime += result.timeEnd - result.timeStart - result.breakTime
-                cal.time = result.date
-                if(cal.get(Calendar.DAY_OF_WEEK) == 1 && !isNext){
-                    //일요일
-                    totalTime += timeInWeek / 5
-                    timeInWeek = result.timeEnd - result.timeStart - result.breakTime
-                }
-                else{
-                    timeInWeek += result.timeEnd - result.timeStart - result.breakTime
-                }
-                Log.d("mytag", timeInWeek.toString())
-            }
+        for (result in weekResults) {
+            totalMoney += calTotalPay(
+                result.timeStart,
+                result.timeEnd,
+                result.overTime,
+                result.breakTime,
+                result.place!!.payByHour
+            )
+            totalTime += result.timeEnd - result.timeStart - result.breakTime
         }
-        else{
-            for (result in weekResults) {
-                totalMoney += calTotalPay(
-                    result.timeStart,
-                    result.timeEnd,
-                    result.overTime,
-                    result.breakTime,
-                    result.place!!.payByHour
-                )
-                totalTime += result.timeEnd - result.timeStart - result.breakTime
-            }
-        }
-
+//        if(selectedPlace != null && selectedPlace!!.vacPay){
+//            var vacTime = 0
+//            var timeInWeek = 0
+//            var firstDay = weekResults[0]!!.date.toFirstDayOfWeek()
+//            var firstWeek = mainActivity.workResults.where()
+//                .equalTo("placeId", selectedPlace!!.id)
+//                .greaterThanOrEqualTo("date", firstDay)
+//                .lessThanOrEqualTo("date", firstDay.toLastDayOfWeek()).findAll().sort("date")
+//            while(firstWeek != null){
+//                for (j in firstWeek){
+//                    timeInWeek += j.timeEnd - j.timeStart - j.breakTime
+//                }
+//                if (timeInWeek in 15 until 40){
+//                    totalTime += timeInWeek / 5
+//                    vacTime += timeInWeek / 5
+//                }
+//                else if(timeInWeek >= 40){
+//
+//                }
+//                timeInWeek = 0
+//                firstDay = firstDay.plus(1)
+//                firstWeek = mainActivity.workResults.where()
+//                    .equalTo("placeId", selectedPlace!!.id)
+//                    .greaterThanOrEqualTo("date", firstDay)
+//                    .lessThanOrEqualTo("date", firstDay.toLastDayOfWeek()).findAll().sort("date")
+//            }
+//            totalMoney += selectedPlace!!.payByHour * vacTime
+//            Log.d("mytag", "주휴 시간 : " + vacTime.toString())
+//        }
 
         totalMoneyText.text = totalMoney.moneyToString()
         totalTimeText.text = "총 " + totalTime.minToString() + " 근무"

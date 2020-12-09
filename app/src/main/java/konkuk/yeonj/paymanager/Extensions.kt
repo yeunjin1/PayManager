@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.provider.Settings.Global.getString
 import android.util.Log
+import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -45,11 +46,32 @@ fun LocalDate.toFirstDayOfMonth(): LocalDate{
 }
 
 fun LocalDate.toLastDayOfWeek(): LocalDate{
-    return this.with(DayOfWeek.SATURDAY)
+    return this.with(DayOfWeek.SUNDAY)
 }
 
 fun LocalDate.toFirstDayOfWeek(): LocalDate{
-    return this.with(DayOfWeek.MONDAY).minusDays(1)
+    return this.with(DayOfWeek.MONDAY)
+}
+
+fun Date.toFirstDayOfWeek(): Date{
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.add(Calendar.DAY_OF_MONTH, (2 - cal.get(Calendar.DAY_OF_WEEK)))
+    return cal.time
+}
+
+fun Date.toLastDayOfWeek(): Date{
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.add(Calendar.DAY_OF_MONTH, (8 - cal.get(Calendar.DAY_OF_WEEK)))
+    return cal.time
+}
+
+fun Date.plus(i:Int): Date{
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.add(Calendar.DATE, i)
+    return cal.time
 }
 
 fun periodToString(startDay: LocalDate, endDay: LocalDate): String{
@@ -109,17 +131,28 @@ fun getNightTime(startTime: Int, endTime: Int): Int{
     var mStart = startTime
     var mEnd = endTime
 
-    if(startTime in 6*60 until 22*60) mStart = 22*60
-    else if(startTime in 30*60 until 46*60) mStart = 46*60
+    if(mStart > mEnd) mEnd += 24 * 60
+    Log.d("mytag", "start" + mStart.toString())
+    Log.d("mytag", "end" + mEnd.toString())
 
-    if(endTime in 6*60 .. 22*60) mEnd = 6*60
-    else if(endTime in 30*60 .. 46*60) mEnd = 30*60
+    if(mStart in 6*60 until 22*60) mStart = 22*60
+    else if(mStart in 30*60 until 46*60) mStart = 46*60
+
+    if(mEnd in 6*60 .. 22*60) mEnd = 6*60
+    else if(mEnd in 30*60 .. 46*60) mEnd = 30*60
 
     var night = mEnd - mStart
     if(night >= 16*60) night -= 16*60
     else if(night < 0) night = 0
+    Log.d("mytag", "night" + night.toString())
+
     return night
 }
+
+fun getNightTimeText(startTime: Int, endTime: Int): String{
+    return "야간 " + getNightTime(startTime, endTime).toString() + "분"
+}
+
 
 fun Int.toDayString(): String{
     when(this){
@@ -147,6 +180,35 @@ fun Date.convertToDay(): Int {
     if(day >= 2) return day - 2
     else return 6
 }
+
+fun EditText.getTextString(): String{
+    if(this.text.toString().trim() == "" || this.text.isEmpty()){
+        return this.hint.toString()
+    }
+    else
+        return this.text.toString()
+}
+
+fun getTotalTimeText(startHour: Int, startMin: Int, endHour: Int, endMin: Int, breakTime: Int): String{
+    var endTime = endHour * 60 + endMin
+    val startTime = startHour * 60 + startMin
+    if(startTime > endTime) endTime += 24 * 60
+    val total = endTime - startTime - breakTime
+    val hour = total / 60
+    val min = total % 60
+    return "총 " + hour.toString() + "시간" + min.toString() + "분"
+}
+
+fun getTotalTimeText(startTime: Int, endTime: Int, breakTime: Int): String{
+    var endTime = endTime
+    if(startTime > endTime) endTime += 24 * 60
+    var total = endTime - startTime - breakTime
+    val hour = total / 60
+    val min = total % 60
+    return "총 " + hour.toString() + "시간" + min.toString() + "분"
+}
+
+
 
 
 internal fun TextView.setTextColorRes(@ColorRes color: Int) = setTextColor(context.getColorCompat(color))

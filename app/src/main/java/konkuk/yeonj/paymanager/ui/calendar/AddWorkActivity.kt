@@ -12,6 +12,7 @@ import konkuk.yeonj.paymanager.widget.dialog.CustomDialog
 import kotlinx.android.synthetic.main.activity_add_work.*
 import kotlinx.android.synthetic.main.activity_add_work.confirm_button
 import kotlinx.android.synthetic.main.activity_add_work.toolbar
+import kotlinx.android.synthetic.main.row_cal_list.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -78,6 +79,8 @@ class AddWorkActivity : AppCompatActivity() {
             }
             startTime.text = (startHour * 60 + startMin).convertToTimeString()
             endTime.text = (endHour * 60 + endMin).convertToTimeString()
+            nightText.text = getNightTimeText(startHour * 60 + startMin, endHour * 60 + endMin)
+            totalTimeText.text = getTotalTimeText(startHour, startMin, endHour, endMin, 0)
         }
 
         if(work != null) {
@@ -86,13 +89,14 @@ class AddWorkActivity : AppCompatActivity() {
             endTime.text = work!!.timeEnd.convertToTimeString()
             dateText.text = dateFormat.format(work!!.date)
             breakEdit.setText(work!!.breakTime.toString())
-            val nightTime = getNightTime(work!!.timeStart, work!!.timeEnd)
-            nightEdit.setText(nightTime.toString())
+            nightText.text = getNightTimeText(work!!.timeStart, work!!.timeEnd)
             overEdit.setText(work!!.overTime.toString())
             placeName.text = work!!.place!!.name
             placeName.background.colorFilter = work!!.place!!.color.toColorRes(this).toColorFilter()
             startTime.background.colorFilter = work!!.place!!.color.toColorRes(this).toColorFilter()
             endTime.background.colorFilter = work!!.place!!.color.toColorRes(this).toColorFilter()
+            totalTimeText.text = getTotalTimeText(work!!.timeStart, work!!.timeEnd, work!!.breakTime)
+
 
             startHour = work!!.timeStart / 60
             startMin = work!!.timeStart % 60
@@ -119,6 +123,8 @@ class AddWorkActivity : AppCompatActivity() {
                     .show()
             }
             else{
+                var breakVal = breakEdit.getTextString().toInt()
+                var overVal = overEdit.getTextString().toInt()
                 if(place != null){
                     //추가
                     realm.beginTransaction()
@@ -129,23 +135,18 @@ class AddWorkActivity : AppCompatActivity() {
                     item.timePush = System.currentTimeMillis()
                     item.timeStart = startTime
                     item.timeEnd = endTime
-                    item.breakTime = breakEdit.text.toString().toInt()
-//                    item.nightTime = nightEdit.text.toString().toInt()
-                    item.overTime = overEdit.text.toString().toInt()
-//                    item.timeDuring = duringTime - item.breakTime
+                    item.breakTime = breakVal
+                    item.overTime = overVal
                     realm.commitTransaction()
                 }
 
                 if(work != null) {
                     //수정
                     realm.beginTransaction()
-//                    work!!.timePush = System.currentTimeMillis()
                     work!!.timeStart = startTime
                     work!!.timeEnd = endTime
-                    work!!.breakTime = breakEdit.text.toString().toInt()
-//                    work!!.nightTime = nightEdit.text.toString().toInt()
-                    work!!.overTime = overEdit.text.toString().toInt()
-//                    work!!.timeDuring = duringTime - work!!.breakTime
+                    work!!.breakTime = breakVal
+                    work!!.overTime = overVal
                     realm.commitTransaction()
                 }
                 finish()
@@ -158,18 +159,10 @@ class AddWorkActivity : AppCompatActivity() {
                 startHour = dialog.getPickerHour()
                 startMin = dialog.getPickerMinute()
                 startTime.text = (startHour * 60 + startMin).convertToTimeString()
+                nightText.text = getNightTimeText(startHour * 60 + startMin, endHour * 60 + endMin)
+                totalTimeText.text = getTotalTimeText(startHour, startMin, endHour, endMin, breakEdit.getTextString().toInt())
                 dialog.dismissDialog()
             }.show()
-//            val timeSetListener = TimePickerDialog.OnTimeSetListener{ timePicker, hour, minute ->
-//                cal.set(Calendar.HOUR_OF_DAY, hour)
-//                cal.set(Calendar.MINUTE, minute)
-//                startTime.text = timeFormat.format(cal.time)
-//                startHour = hour
-//                startMin = minute
-//            }
-//            val dialog = TimePickerDialog(this@AddWorkActivity, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true)
-//            dialog.updateTime(startHour, startMin)
-//            dialog.show()
         }
 
         endTime.setOnClickListener {
@@ -178,19 +171,10 @@ class AddWorkActivity : AppCompatActivity() {
                 endHour = dialog.getPickerHour()
                 endMin = dialog.getPickerMinute()
                 endTime.text = (endHour * 60 + endMin).convertToTimeString()
+                nightText.text = getNightTimeText(startHour * 60 + startMin, endHour * 60 + endMin)
+                totalTimeText.text = getTotalTimeText(startHour, startMin, endHour, endMin, breakEdit.getTextString().toInt())
                 dialog.dismissDialog()
             }.show()
-//            val cal = Calendar.getInstance()
-//            val timeSetListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-//                cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
-//                cal.set(Calendar.MINUTE, minute)
-//                endTime.text = timeFormat.format(cal.time)
-//                endHour = hourOfDay
-//                endMin = minute
-//            }
-//            val dialog = TimePickerDialog(this@AddWorkActivity, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true)
-//            dialog.updateTime(endHour, endMin)
-//            dialog.show()
         }
     }
 

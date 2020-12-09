@@ -15,7 +15,10 @@ class TimePickerDialog (context: Context) : Dialog(context) {
             dialog.create()
             dialog.setContentView(R.layout.time_picker_dialog_layout)
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog.timePicker1.hour = hour
+            if(hour >= 24)
+                dialog.timePicker1.hour = hour - 24
+            else
+                dialog.timePicker1.hour = hour
             dialog.timePicker1.minute = min
             dialog.timePicker1.setIs24HourView(true)
             dialog.cancelBtn.setOnClickListener { dismissDialog() }
